@@ -21,6 +21,13 @@ const routerhandler = require('./routerhandler');
 app.use('/', routerhandler);
 
 // 함수
-
-const { getPose, move } = require('./func');
+const { cancle, move, charge, checkBattery, getPose, test } = require('./func');
+// cancle();
+// move(2);
+// charge(3);
 getPose();
+// test();
+
+
+//
+// getcurrentspeed 사용 불가 - 설정 속도가아닌 (이동중상태일때만 api가 작동함, 설정 주행속도 확인불가)
