@@ -79,13 +79,15 @@ let tolerance = 0.05;
 
 async function getPose(ip){
     try {
-        console.log(new Date().toISOString());
-        const response = await axios.get(`http://${ip}/reeman/pose`);
-        // const response = await axios.get(`http://${ip}/test`);
-        if (response.status === 200) {
-
+        // console.log("====================================");
+        // console.log("=");
+        // console.log(new Date().toISOString());
+        // const response = await axios.get(`http://${ip}/reeman/pose`);
+        const response = await axios.get(`http://${ip}/test`);
+        // if (response.status === 200) {
             console.log(response.data);
-
+            // console.log(new Date().toISOString());
+            // console.log("====================================");
             // if(state == false){
             //     // target_x = -2.81
             //     // target_y = 1.35
@@ -127,14 +129,12 @@ async function getPose(ip){
             //     theta2 = theta1;
             // }
 
-        }
-
-    }finally{
-        getPoseReStart = setTimeout(() => {
-            getPose(ip);
-    }, 20);
+        // }
+    } catch (error) {
+        console.error('Error with API call:', error);
     }
 }
+
 
 
 // // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함, API설명과 다름

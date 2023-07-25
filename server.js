@@ -25,14 +25,16 @@ const { cancle, move, charge, checkBattery, getPose, test } = require('./func');
 // cancle();
 // move(2);
 // charge(3);
-// getPose('192.168.0.137:8001');
-// getPose('192.168.0.137:8002');
-// getPose('192.168.0.137:8003');
-// getPose('192.168.0.137:8004');
-// getPose('192.168.0.137:8005');
-getPose('192.168.0.13');
 // test();
 
-
+// setInterval(() => {
+//     // getPose('192.168.0.173');
+//     getPose('192.168.0.137:8001');
+//     getPose('192.168.0.137:8002');
+//     getPose('192.168.0.137:8003');
+//     getPose('192.168.0.137:8004');
+//     getPose('192.168.0.137:8005');
+// }, 30);
+move(1);
 //
 // getcurrentspeed 사용 불가 - 설정 속도가아닌 (이동중상태일때만 api가 작동함, 설정 주행속도 확인불가)
