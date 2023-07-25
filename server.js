@@ -25,7 +25,12 @@ const { cancle, move, charge, checkBattery, getPose, test } = require('./func');
 // cancle();
 // move(2);
 // charge(3);
-getPose();
+// getPose('192.168.0.137:8001');
+// getPose('192.168.0.137:8002');
+// getPose('192.168.0.137:8003');
+// getPose('192.168.0.137:8004');
+// getPose('192.168.0.137:8005');
+getPose('192.168.0.13');
 // test();
 
 
