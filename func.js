@@ -82,9 +82,8 @@ async function getPose(ip){
         // console.log("====================================");
         // console.log("=");
         // console.log(new Date().toISOString());
-        // const response = await axios.get(`http://${ip}/reeman/pose`);
-        const response = await axios.get(`http://${ip}/test`);
-        // if (response.status === 200) {
+        const response = await axios.get(`http://${ip}/reeman/pose`);
+        if (response.status === 200) {
             console.log(response.data);
             // console.log(new Date().toISOString());
             // console.log("====================================");
@@ -129,15 +128,16 @@ async function getPose(ip){
             //     theta2 = theta1;
             // }
 
-        // }
+        }
     } catch (error) {
         console.error('Error with API call:', error);
     }
 }
 
 
-
-// // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함, API설명과 다름
+// 수동 이동
+// // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함,
+// API설명을 보면 지정한만큼 이동할거같은데 누르고있는식으로 계속 요청을 보내야함
 // async function speedcheck(){
 //     try {
 //         const response = await axios.post(`http://192.168.0.13/cmd/speed`,{
@@ -153,27 +153,26 @@ async function getPose(ip){
 //         console.log("error : ", error);
 //     }
 // }
+let robots = [];
 
-async function test() {
+async function test(ip){
     try {
-        const response = await axios.get(`http://192.168.0.13/cmd/pose`,[
-
-            // { "1" : ["0.17", "-0.03", "65.06"] },
-            // { "2" : ["-2.59", "1.06", -"16.44"] },
-            // { "1" : [0.17, -0.03, 65.06] },
-            // { "2" : [-2.59, 1.06, -16.44] },
-            // { 1 : ["0.17", "-0.03", "65.06"] },
-            // { 2 : ["-2.59", "1.06", -"16.44"] },
-            // { 1 : [0.17, -0.03, 65.06] },
-            // { 2 : [-2.59, 1.06, -16.44] },
-        ]);
-             
+        const response = await axios.get(`http://${ip}/test`);
         if (response.status === 200) {
-            console.log(response.data);
+            // console.log(response.data);
+            
+         
+            robots[`robotNumber${response.data.robotNumber}`] = {
+                x : response.data.x,
+                y : response.data.y,
+                theta : response.data.theta
+            }
+            console.log(robots.length);
+
+
         }
     } catch (error) {
         console.error('Error with API call:', error);
-        console.log("error : ", error);
     }
 }
 
