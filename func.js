@@ -15,9 +15,9 @@ async function cancle(){
 
 
 
-async function move(point){
+async function movePoint(ip, point){
     try {
-        const response = await axios.post(`http://192.168.0.13/cmd/nav_point`,{
+        const response = await axios.post(`http://${ip}/cmd/nav_point`,{
             point: `${point}`
         });
         if (response.status === 200) {
@@ -31,6 +31,22 @@ async function move(point){
     } catch (error) {
         console.error('Error with API call:', error);
         console.log("error : ", error);
+    }
+}
+
+async function moverCoordinates(ip, x,y, theta){
+    try {
+        console.log(new Date().toISOString());
+        const response = await axios.post(`http://${ip}/cmd/nav`,{
+            x,
+            y,
+            theta
+        });
+        if (response.status === 200) {
+            console.log(response.data);
+        }
+    } catch (error) {
+        console.error('Error with API call:', error);
     }
 }
 
@@ -65,97 +81,9 @@ async function checkBattery(){ //로봇별 IP정할방법을 정해야함
 }
 // ────────────────────────────────────────────────────────────────────────────────────────────
 // 자기 위치 발신하기 / 
-
-var x1;
-var x2
-var y1
-var y2;
-var theta1;
-var theta2;
-var count = 0;
-var state = false;
-let getPose2;
-let tolerance = 0.05;
-
-async function getPose(ip){
-    try {
-        // console.log("====================================");
-        // console.log("=");
-        // console.log(new Date().toISOString());
-        const response = await axios.get(`http://${ip}/reeman/pose`);
-        if (response.status === 200) {
-            console.log(response.data);
-            // console.log(new Date().toISOString());
-            // console.log("====================================");
-            // if(state == false){
-            //     // target_x = -2.81
-            //     // target_y = 1.35
-            //     target_x = 0.17
-            //     target_y = 0.03
-            //     x1 = Math.floor(response.data.x * 100) / 100;
-            //     x1 = response.data.x
-            //     y1 = Math.floor(response.data.y * 100) / 100;
-            //     y1 = response.data.y
-            //     theta1 = Math.floor(response.data.theta * 100) / 100;
-
-
-            //     console.log(x1 + " / " + y1 + " / " + theta1);
-
-            //     if(Math.abs(x1 - target_x) <= tolerance && Math.abs(y1 - target_y) <= tolerance) {  
-            //     // if(x1 == 2.59 && y1 == 1.06 && theta1 == 16.44){
-            //         server.close(() => {
-            //             clearTimeout(getPoseReStart);
-            //             console.log('목적지 도착');
-            //         });
-            //     }
-
-            //     if(x1 == x2 && y1 == y2 && theta1 == theta2){
-            //         count++;
-            //         if(count == 10){
-            //             console.log("!!!");
-            //             count = 0;
-            //             server.close(() => {
-            //                 clearTimeout(getPoseReStart);
-            //                 console.log('Server closed');
-            //             });
-            //         }
-            //     }else{
-            //         count = 0;
-            //     }
-
-            //     x2 = x1;
-            //     y2 = y1;
-            //     theta2 = theta1;
-            // }
-
-        }
-    } catch (error) {
-        console.error('Error with API call:', error);
-    }
-}
-
-
-// 수동 이동
-// // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함,
-// API설명을 보면 지정한만큼 이동할거같은데 누르고있는식으로 계속 요청을 보내야함
-// async function speedcheck(){
-//     try {
-//         const response = await axios.post(`http://192.168.0.13/cmd/speed`,{
-//             vx : 1,
-//             vth : 0
-//         });
-//         if (await response.status === 200) {
-//             console.log(response.data);
-//         }
-
-//     } catch (error) {
-//         console.error('Error with API call:', error);
-//         console.log("error : ", error);
-//     }
-// }
 let robots = [];
 let currentRobotIndex;
-async function test(ip){
+async function getPose(ip){
     try {
         console.log(new Date().toISOString());
         const response = await axios.get(`http://${ip}/test`);
@@ -177,7 +105,6 @@ async function test(ip){
             var compareTheta;
             tolerance = 0.4
             for(let i = 0; i < robots.length; i++){
-                // if(Math.abs(x1 - target_x) <= tolerance && Math.abs(y1 - target_y) <= tolerance){}
                 if (i != currentRobotIndex) {  // 비교할 값에서 본인 좌표를 제외
                     compareX = robots[i].x;
                     compareY = robots[i].y;
@@ -193,21 +120,37 @@ async function test(ip){
     } catch (error) {
         console.error('Error with API call:', error);
     }
-    finally{
-        test(ip);
-    }
 }
 
 
 module.exports = {
     cancle: cancle,
-    move: move,
+    movePoint: movePoint,
+    moverCoordinates: moverCoordinates,
     charge: charge,
     checkBattery: checkBattery,
     getPose: getPose,
     test: test,
 
 };
+
+//─────────────────────────────────────────────────────────────────────
+
+async function test(ip, x, y, z,){
+    try {
+        console.log(new Date().toISOString());
+        const response = await axios.post(`http://${ip}/cmd/nav`,{
+            x : 0.17,
+            y : -0.03,
+            theta : 180.06
+        });
+        if (response.status === 200) {
+            console.log(response.data);
+        }
+    } catch (error) {
+        console.error('Error with API call:', error);
+    }
+}
 
 //─────────────────────────────────────────────────────────────────────
 // 사용 보류 기능
@@ -223,6 +166,51 @@ module.exports = {
 //         if (response.status === 200) {
 //             console.log(response.data);
 //         }
+//     } catch (error) {
+//         console.error('Error with API call:', error);
+//         console.log("error : ", error);
+//     }
+// }
+
+// 로봇 이름 받기
+// async function getRobotName(ip){
+//     try {
+//         console.log(new Date().toISOString());
+//         const response = await axios.get(`http://${ip}/reeman/hostname`);
+//         if (response.status === 200) {
+//             console.log(response.data);
+//         }
+//     } catch (error) {
+//         console.error('Error with API call:', error);
+//     }
+// }
+
+// 레이저 데이터 수집 => 근데 이걸 우리가 활용이 가능할지 모르겠음
+// async function getLaser(ip){
+//     try {
+//         console.log(new Date().toISOString());
+//         const response = await axios.get(`http://${ip}/reeman/laser`);
+//         if (response.status === 200) {
+//             console.log(response.data);
+//         }
+//     } catch (error) {
+//         console.error('Error with API call:', error);
+//     }
+// }
+
+// 수동 이동
+// // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함,
+// API설명을 보면 지정한만큼 이동할거같은데 누르고있는식으로 계속 요청을 보내야함
+// async function speedcheck(){
+//     try {
+//         const response = await axios.post(`http://192.168.0.13/cmd/speed`,{
+//             vx : 1,
+//             vth : 0
+//         });
+//         if (await response.status === 200) {
+//             console.log(response.data);
+//         }
+
 //     } catch (error) {
 //         console.error('Error with API call:', error);
 //         console.log("error : ", error);

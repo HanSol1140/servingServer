@@ -21,19 +21,19 @@ const routerhandler = require('./routerhandler');
 app.use('/', routerhandler);
 
 // 함수
-const { cancle, move, charge, checkBattery, getPose, test } = require('./func');
+const { cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test } = require('./func');
 // cancle();
-// move(2);
+movePoit('192.168.0.15', 1);
 // charge(3);
 // test();
 
 // setInterval(() => {
-//     // getPose('192.168.0.173');
-    test('192.168.0.137:8001');
-    test('192.168.0.137:8002');
-    test('192.168.0.137:8003');
-    test('192.168.0.137:8004');
-    test('192.168.0.137:8005');
+    // getPose('192.168.0.173');
+    // moverCoordinates('192.168.0.15', 0.17, -0.03, 65,06)
+    // test('192.168.0.137:8002');
+    // test('192.168.0.137:8003');
+    // test('192.168.0.137:8004');
+    // test('192.168.0.137:8005');
 // }, 30);
 
 
