@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-async function cancle(){
+async function cancle() {
     try {
         const response = await axios.post(`http://192.168.0.13/cmd/cancel_goal`);
         if (await response.status === 200) {
@@ -15,17 +15,17 @@ async function cancle(){
 
 
 
-async function move(point){
+async function move(point) {
     try {
-        const response = await axios.post(`http://192.168.0.13/cmd/nav_point`,{
+        const response = await axios.post(`http://192.168.0.13/cmd/nav_point`, {
             point: `${point}`
         });
         if (response.status === 200) {
             console.log(response.data);
-            setTimeout(() =>{
+            setTimeout(() => {
                 state = true;
             }, 1000);
-            
+
         }
 
     } catch (error) {
@@ -34,11 +34,11 @@ async function move(point){
     }
 }
 
-async function charge(point){
+async function charge(point) {
     try {
-        const response = await axios.post(`http://192.168.0.13/cmd/charge`,{
-            type : 1,
-            point : `${point}`
+        const response = await axios.post(`http://192.168.0.13/cmd/charge`, {
+            type: 1,
+            point: `${point}`
         });
         if (await response.status === 200) {
             console.log(response.data);
@@ -51,7 +51,7 @@ async function charge(point){
 }
 
 
-async function checkBattery(){ //로봇별 IP정할방법을 정해야함
+async function checkBattery() { //로봇별 IP정할방법을 정해야함
     try {
         const response = await axios.get(`http://192.168.0.13/cmd/base_encode`,);
         if (await response.status === 200) {
@@ -77,7 +77,7 @@ var state = false;
 let getPose2;
 let tolerance = 0.05;
 
-async function getPose(ip){
+async function getPose(ip) {
     try {
         // console.log("====================================");
         // console.log("=");
@@ -85,51 +85,50 @@ async function getPose(ip){
         // const response = await axios.get(`http://${ip}/reeman/pose`);
         const response = await axios.get(`http://${ip}/test`);
         // if (response.status === 200) {
-            console.log(response.data);
-            // console.log(new Date().toISOString());
-            // console.log("====================================");
-            // if(state == false){
-            //     // target_x = -2.81
-            //     // target_y = 1.35
-            //     target_x = 0.17
-            //     target_y = 0.03
-            //     x1 = Math.floor(response.data.x * 100) / 100;
-            //     x1 = response.data.x
-            //     y1 = Math.floor(response.data.y * 100) / 100;
-            //     y1 = response.data.y
-            //     theta1 = Math.floor(response.data.theta * 100) / 100;
+
+        console.log(response.data);
+        // console.log(new Date().toISOString());
+        // console.log("====================================");
+        if (state == false) {
+            target_x = -2.81
+            target_y = 1.35
+            target_x = 0.17
+            target_y = 0.03
+            x1 = Math.floor(response.data.x * 100) / 100;
+            x1 = response.data.x
+            y1 = Math.floor(response.data.y * 100) / 100;
+            y1 = response.data.y
+            theta1 = Math.floor(response.data.theta * 100) / 100;
 
 
-            //     console.log(x1 + " / " + y1 + " / " + theta1);
+            console.log(x1 + " / " + y1 + " / " + theta1);
 
-            //     if(Math.abs(x1 - target_x) <= tolerance && Math.abs(y1 - target_y) <= tolerance) {  
-            //     // if(x1 == 2.59 && y1 == 1.06 && theta1 == 16.44){
-            //         server.close(() => {
-            //             clearTimeout(getPoseReStart);
-            //             console.log('목적지 도착');
-            //         });
-            //     }
+            if (Math.abs(x1 - target_x) <= tolerance && Math.abs(y1 - target_y) <= tolerance) {
+                // if(x1 == 2.59 && y1 == 1.06 && theta1 == 16.44){
+                server.close(() => {
+                    clearTimeout(getPoseReStart);
+                    console.log('목적지 도착');
+                });
+            }
 
-            //     if(x1 == x2 && y1 == y2 && theta1 == theta2){
-            //         count++;
-            //         if(count == 10){
-            //             console.log("!!!");
-            //             count = 0;
-            //             server.close(() => {
-            //                 clearTimeout(getPoseReStart);
-            //                 console.log('Server closed');
-            //             });
-            //         }
-            //     }else{
-            //         count = 0;
-            //     }
+            if (x1 == x2 && y1 == y2 && theta1 == theta2) {
+                count++;
+                if (count == 10) {
+                    console.log("!!!");
+                    count = 0;
+                    server.close(() => {
+                        clearTimeout(getPoseReStart);
+                        console.log('Server closed');
+                    });
+                }
+            } else {
+                count = 0;
+            }
 
-            //     x2 = x1;
-            //     y2 = y1;
-            //     theta2 = theta1;
-            // }
-
-        // }
+            x2 = x1;
+            y2 = y1;
+            theta2 = theta1;
+        }
     } catch (error) {
         console.error('Error with API call:', error);
     }
@@ -156,7 +155,7 @@ async function getPose(ip){
 
 async function test() {
     try {
-        const response = await axios.get(`http://192.168.0.13/cmd/pose`,[
+        const response = await axios.get(`http://192.168.0.13/cmd/pose`, [
 
             // { "1" : ["0.17", "-0.03", "65.06"] },
             // { "2" : ["-2.59", "1.06", -"16.44"] },
@@ -167,7 +166,7 @@ async function test() {
             // { 1 : [0.17, -0.03, 65.06] },
             // { 2 : [-2.59, 1.06, -16.44] },
         ]);
-             
+
         if (response.status === 200) {
             console.log(response.data);
         }
@@ -198,7 +197,7 @@ module.exports = {
 //             x : 0,
 //             y : 0,
 //             theta : 0
-//         });    
+//         });
 //         if (response.status === 200) {
 //             console.log(response.data);
 //         }
