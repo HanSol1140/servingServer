@@ -154,25 +154,47 @@ async function getPose(ip){
 //     }
 // }
 let robots = [];
-
+let currentRobotIndex;
 async function test(ip){
     try {
+        console.log(new Date().toISOString());
         const response = await axios.get(`http://${ip}/test`);
         if (response.status === 200) {
             // console.log(response.data);
             
-         
-            robots[`robotNumber${response.data.robotNumber}`] = {
+            currentRobotIndex = `${response.data.robotNumber}` - 1;
+            robots[currentRobotIndex] = {
                 x : response.data.x,
                 y : response.data.y,
                 theta : response.data.theta
             }
-            console.log(robots.length);
+            // console.log(robots[currentRobotIndex].x);
+            var currentX = robots[currentRobotIndex].x;
+            var currentY = robots[currentRobotIndex].y;
+            var currentTheta = robots[currentRobotIndex].theta;
+            var compareX;
+            var compareY;
+            var compareTheta;
+            tolerance = 0.4
+            for(let i = 0; i < robots.length; i++){
+                // if(Math.abs(x1 - target_x) <= tolerance && Math.abs(y1 - target_y) <= tolerance){}
+                if (i != currentRobotIndex) {  // 비교할 값에서 본인 좌표를 제외
+                    compareX = robots[i].x;
+                    compareY = robots[i].y;
+                    compareTheta = robots[i].theta;
+                    if(Math.abs(currentX - compareX) <= tolerance && Math.abs(currentY - compareY) <= tolerance){
+                        console.log(`${i+1}번 로봇 근처에 다른 로봇이 있습니다!`);
+                    }
+                }
+            }
 
 
         }
     } catch (error) {
         console.error('Error with API call:', error);
+    }
+    finally{
+        test(ip);
     }
 }
 
