@@ -122,7 +122,10 @@ async function getPose(ip){
                     compareY = robots[i].y;
                     compareTheta = robots[i].theta;
                     if(Math.abs(currentX - compareX) <= tolerance && Math.abs(currentY - compareY) <= tolerance){
-                        console.log(`${i+1}번 로봇 근처에 다른 로봇이 있습니다!`);
+                        console.log(`${i+1}번 로봇 근처에 다른 로봇이 있습니다!`); 
+                        // 충돌가능성이 있는 로봇을 확인
+
+                        // if()// 이제 로봇의 방향을 확인해서 서로 충돌가능성이 있는지, 있다면 회피로직, 없다면 지시없음
                     }
                 }
             }
