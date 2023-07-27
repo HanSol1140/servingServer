@@ -23,7 +23,7 @@ app.use('/', routerhandler);
 // 함수
 const { cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test } = require('./func');
 // cancle();
-movePoit('192.168.0.15', 1);
+// movePoint('192.168.0.15', 1);
 // charge(3);
 // test();
 
