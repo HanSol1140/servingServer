@@ -15,26 +15,8 @@ async function cancle(){
 
 
 
-async function movePoint(ip, point){
-    try {
-        const response = await axios.post(`http://${ip}/cmd/nav_point`,{
-            point: `${point}`
-        });
-        if (response.status === 200) {
-            console.log(response.data);
-            setTimeout(() =>{
-                state = true;
-            }, 1000);
-            
-        }
 
-    } catch (error) {
-        console.error('Error with API call:', error);
-        console.log("error : ", error);
-    }
-}
-
-async function moverCoordinates(ip, x,y, theta){
+async function moverCoordinates(ip, x, y, theta){
     try {
         console.log(new Date().toISOString());
         const response = await axios.post(`http://${ip}/cmd/nav`,{
@@ -50,9 +32,38 @@ async function moverCoordinates(ip, x,y, theta){
     }
 }
 
-async function charge(point){
+let moveCommands = {};
+async function movePoint(ip, point){
     try {
-        const response = await axios.post(`http://192.168.0.13/cmd/charge`,{
+        const response = await axios.post(`http://${ip}/cmd/nav_point`,{
+            point: `${point}`
+        });
+        if (response.status === 200) {
+            console.log(response.data);
+            setTimeout(() =>{
+                state = true;
+            }, 1000);
+            
+        }
+        moveCommands[ip] = point; // moveCommands변수에 ip : point형식으로 요청을 저장 
+
+    } catch (error) {
+        console.error('Error with API call:', error);
+        console.log("error : ", error);
+    }
+}
+
+
+async function retryMovePoint(ip){
+    let point = moveCommands[ip];
+    if(point){
+        await movePoint(ip, point);
+    }
+}
+
+async function charge(ip, point){
+    try {
+        const response = await axios.post(`http://${ip}/cmd/charge`,{
             type : 1,
             point : `${point}`
         });
@@ -67,9 +78,9 @@ async function charge(point){
 }
 
 
-async function checkBattery(){ //로봇별 IP정할방법을 정해야함
+async function checkBattery(ip){ //로봇별 IP정할 방법을 정해야함
     try {
-        const response = await axios.get(`http://192.168.0.13/cmd/base_encode`,);
+        const response = await axios.get(`http://${ip}/cmd/base_encode`,);
         if (await response.status === 200) {
             console.log(response.data);
         }
@@ -79,6 +90,7 @@ async function checkBattery(){ //로봇별 IP정할방법을 정해야함
         console.log("error : ", error);
     }
 }
+
 // ────────────────────────────────────────────────────────────────────────────────────────────
 // 자기 위치 발신하기 / 
 let robots = [];
@@ -103,9 +115,9 @@ async function getPose(ip){
             var compareX;
             var compareY;
             var compareTheta;
-            tolerance = 0.4
+            tolerance = 0.5 // 해당 값만큼 접근하면 접근 알림 출력
             for(let i = 0; i < robots.length; i++){
-                if (i != currentRobotIndex) {  // 비교할 값에서 본인 좌표를 제외
+                if (i != currentRobotIndex) {  // 비교할 값에서 본인을 제외
                     compareX = robots[i].x;
                     compareY = robots[i].y;
                     compareTheta = robots[i].theta;
