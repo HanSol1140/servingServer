@@ -1,6 +1,31 @@
 const axios = require('axios');
+const fs = require('fs');
 
-async function cancle(){
+async function setupRobots() {
+    if (!fs.existsSync('RobotSettings.json')) {
+        console.error("File not found");
+        return;
+    }
+
+    try {
+        const fileData = fs.readFileSync('RobotSettings.json', 'utf8');
+        let data = fileData ? JSON.parse(fileData) : [];
+        let robots = {}; // 변수에 로봇 정보를 저장하기위해.
+
+        data.forEach((robot, index) => {
+            robots[`robot${index + 1}`] = robot;
+        });
+        return robots
+    } catch (error) {
+        console.error('Error reading file:', error);3
+        return {};
+
+    }
+}
+
+
+
+async function cancle() {
     try {
         const response = await axios.post(`http://192.168.0.13/cmd/cancel_goal`);
         if (await response.status === 200) {
@@ -16,10 +41,10 @@ async function cancle(){
 
 
 
-async function moverCoordinates(ip, x, y, theta){
+async function moverCoordinates(ip, x, y, theta) {
     try {
         console.log(new Date().toISOString());
-        const response = await axios.post(`http://${ip}/cmd/nav`,{
+        const response = await axios.post(`http://${ip}/cmd/nav`, {
             x,
             y,
             theta
@@ -33,17 +58,17 @@ async function moverCoordinates(ip, x, y, theta){
 }
 
 let moveCommands = {};
-async function movePoint(ip, point){
+async function movePoint(ip, point) {
     try {
-        const response = await axios.post(`http://${ip}/cmd/nav_point`,{
+        const response = await axios.post(`http://${ip}/cmd/nav_point`, {
             point: `${point}`
         });
         if (response.status === 200) {
             console.log(response.data);
-            setTimeout(() =>{
+            setTimeout(() => {
                 state = true;
             }, 1000);
-            
+
         }
         moveCommands[ip] = point; // moveCommands변수에 ip : point형식으로 요청을 저장 
 
@@ -54,18 +79,18 @@ async function movePoint(ip, point){
 }
 
 
-async function retryMovePoint(ip){
+async function retryMovePoint(ip) {
     let point = moveCommands[ip];
-    if(point){
+    if (point) {
         await movePoint(ip, point);
     }
 }
 
-async function charge(ip, point){
+async function charge(ip, point) {
     try {
-        const response = await axios.post(`http://${ip}/cmd/charge`,{
-            type : 1,
-            point : `${point}`
+        const response = await axios.post(`http://${ip}/cmd/charge`, {
+            type: 1,
+            point: `${point}`
         });
         if (await response.status === 200) {
             console.log(response.data);
@@ -78,7 +103,7 @@ async function charge(ip, point){
 }
 
 
-async function checkBattery(ip){ //로봇별 IP정할 방법을 정해야함
+async function checkBattery(ip) { //로봇별 IP정할 방법을 정해야함
     try {
         const response = await axios.get(`http://${ip}/cmd/base_encode`,);
         if (await response.status === 200) {
@@ -95,18 +120,18 @@ async function checkBattery(ip){ //로봇별 IP정할 방법을 정해야함
 // 자기 위치 발신하기 / 
 let robots = [];
 let currentRobotIndex;
-async function getPose(ip){
+async function getPose(ip) {
     try {
         console.log(new Date().toISOString());
         const response = await axios.get(`http://${ip}/test`);
         if (response.status === 200) {
             // console.log(response.data);
-            
+
             currentRobotIndex = `${response.data.robotNumber}` - 1;
             robots[currentRobotIndex] = {
-                x : response.data.x,
-                y : response.data.y,
-                theta : response.data.theta
+                x: response.data.x,
+                y: response.data.y,
+                theta: response.data.theta
             }
             // console.log(robots[currentRobotIndex].x);
             var currentX = robots[currentRobotIndex].x;
@@ -116,13 +141,13 @@ async function getPose(ip){
             var compareY;
             var compareTheta;
             tolerance = 0.5 // 해당 값만큼 접근하면 접근 알림 출력
-            for(let i = 0; i < robots.length; i++){
+            for (let i = 0; i < robots.length; i++) {
                 if (i != currentRobotIndex) {  // 비교할 값에서 본인을 제외
                     compareX = robots[i].x;
                     compareY = robots[i].y;
                     compareTheta = robots[i].theta;
-                    if(Math.abs(currentX - compareX) <= tolerance && Math.abs(currentY - compareY) <= tolerance){
-                        console.log(`${i+1}번 로봇 근처에 다른 로봇이 있습니다!`); 
+                    if (Math.abs(currentX - compareX) <= tolerance && Math.abs(currentY - compareY) <= tolerance) {
+                        console.log(`${i + 1}번 로봇 근처에 다른 로봇이 있습니다!`);
                         // 충돌가능성이 있는 로봇을 확인
 
                         // if()// 이제 로봇의 방향을 확인해서 서로 충돌가능성이 있는지, 있다면 회피로직, 없다면 지시없음
@@ -139,6 +164,7 @@ async function getPose(ip){
 
 
 module.exports = {
+    setupRobots: setupRobots,
     cancle: cancle,
     movePoint: movePoint,
     moverCoordinates: moverCoordinates,
@@ -146,18 +172,17 @@ module.exports = {
     checkBattery: checkBattery,
     getPose: getPose,
     test: test,
-
 };
 
 //─────────────────────────────────────────────────────────────────────
 
-async function test(ip, x, y, z,){
+async function test(ip, x, y, z,) {
     try {
         console.log(new Date().toISOString());
-        const response = await axios.post(`http://${ip}/cmd/nav`,{
-            x : 0.17,
-            y : -0.03,
-            theta : 180.06
+        const response = await axios.post(`http://${ip}/cmd/nav`, {
+            x: 0.17,
+            y: -0.03,
+            theta: 180.06
         });
         if (response.status === 200) {
             console.log(response.data);
@@ -177,7 +202,7 @@ async function test(ip, x, y, z,){
 //             x : 0,
 //             y : 0,
 //             theta : 0
-//         });    
+//         });
 //         if (response.status === 200) {
 //             console.log(response.data);
 //         }
