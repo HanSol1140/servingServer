@@ -1,11 +1,10 @@
 import os
 
-# Check if the file exists:
-if not os.path.isfile('map.png'):
-    print("File does not exist")
+# 이미지 파일의 절대 경로
+image_path = 'C:\\songhansol\\servingServer\\map.png'
+
+# 이미지 파일이 실제로 존재하는지 확인합니다.
+if os.path.exists(image_path):
+    print('File exists')
 else:
-    try:
-        image = cv2.imread('map.png', cv2.IMREAD_GRAYSCALE)
-        cv2.imshow('Image', image)
-    except Exception as e:
-        print(f"Error opening image: {e}")
+    print('File does not exist')
