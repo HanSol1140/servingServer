@@ -49,17 +49,72 @@ serverSetup();
 // charge(3);
 // test();
 
-// setInterval(() => {
-    // getPose('192.168.0.173');
+setInterval(() => {
+    // getPose('192.168.0.15');
     // moverCoordinates('192.168.0.15', 0.17, -0.03, 65,06)
     // test('192.168.0.137:8002');
     // test('192.168.0.137:8003');
     // test('192.168.0.137:8004');
     // test('192.168.0.137:8005');
-// }, 30);
+}, 30);
+// setTimeout(() => {
+//     movePoint('192.168.0.15', '1');
+// },10);
+
+// setTimeout(() => {
+//     movePoint('192.168.0.15', '2');
+// },7000);
+// setTimeout(() => {
+//     movePoint('192.168.0.15', '3');
+// },14000);
+// setTimeout(() => {
+//     movePoint('192.168.0.15', '4');
+// },21000);
+
+// setInterval(() => {
+
+//     setTimeout(() => {
+//         movePoint('192.168.0.15', '1');
+//     },10);
+    
+//     setTimeout(() => {
+//         movePoint('192.168.0.15', '2');
+//     },7000);
+//     setTimeout(() => {
+//         movePoint('192.168.0.15', '3');
+//     },14000);
+//     setTimeout(() => {
+//         movePoint('192.168.0.15', '4');
+//     },21000);
+
+// }, 29000);
 
 
 
+// setTimeout(() => {
+//     movePoint('192.168.0.15', '5');
+// },10);
+
+// setTimeout(() => {
+//     movePoint('192.168.0.15', '6');
+// },15000);
+
+// setInterval(() => {
+//     setTimeout(() => {
+//         movePoint('192.168.0.15', '5');
+//     },10);
+
+
+//     setTimeout(() => {
+//         movePoint('192.168.0.15', '6');
+//     },15000);
+
+// }, 30000);
+
+
+
+
+// movePoint('192.168.0.15', '4');
 // getcurrentspeed 사용 불가 - 설정 속도가아닌 (이동중상태일때만 api가 작동함, 설정 주행속도 확인불가)
 
 
@@ -75,12 +130,14 @@ serverSetup();
 
 //250도 -> 프로그램 153.55
 
-// const degrees = 20;
-// const radians = (degrees * Math.PI) / 180;
-// console.log(radians); // 출력 결과: 1.5707963267948966
-// moverCoordinates('192.168.0.15', 0.02, 0.02, radians);
+const degrees = 0;
+const radians = (degrees * Math.PI) / 180;
+console.log(radians);
+// moverCoordinates('192.168.0.15', 0.0, 0.0, 0);
+// moverCoordinates('192.168.0.15', 6.5, 0.0, radians);
 
 
 // 027.019.155.8
 // movePoint('192.168.0.15', '0');
 // moverCoordinates('192.168.0.15', 1.0, 0.3, radians);
+

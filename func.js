@@ -123,9 +123,9 @@ let currentRobotIndex;
 async function getPose(ip) {
     try {
         console.log(new Date().toISOString());
-        const response = await axios.get(`http://${ip}/test`);
+        const response = await axios.get(`http://${ip}/reeman/pose`);
         if (response.status === 200) {
-            // console.log(response.data);
+            console.log(response.data);
 
             currentRobotIndex = `${response.data.robotNumber}` - 1;
             robots[currentRobotIndex] = {
