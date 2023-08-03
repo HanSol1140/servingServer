@@ -131,10 +131,13 @@ setInterval(() => {
 //250도 -> 프로그램 153.55
 
 const degrees = 0;
+// const degrees = 178;
+
 const radians = (degrees * Math.PI) / 180;
 console.log(radians);
 // moverCoordinates('192.168.0.15', 0.0, 0.0, 0);
-// moverCoordinates('192.168.0.15', 6.5, 0.0, radians);
+// moverCoordinates('192.168.0.15', -2.2, -0.65, radians);
+// moverCoordinates('192.168.0.15', 6.2, -0.8, radians);
 
 
 // 027.019.155.8
