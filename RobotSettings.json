@@ -1,12 +1,6 @@
 [
   {
-    "robotName": "serving1",
-    "robotNumber": "001",
-    "robotIP": "1"
-  },
-  {
-    "robotName": "serving2",
-    "robotNumber": "002",
-    "robotIP": "2"
+    "pointName": "123",
+    "pointCoordinates": "123"
   }
 ]
