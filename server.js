@@ -16,11 +16,10 @@ const server = app.listen(PORT, () => {
     console.log(`Server listening on HTTP port ${PORT}`);
 });
 
-// 라우터
+// 라우터 모듈화
 const routerhandler = require('./routerhandler');
 app.use('/', routerhandler);
-
-// 함수
+// 함수 모듈화
 const { setupRobots, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test } = require('./func');
 
 let bot1;
