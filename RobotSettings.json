@@ -1,6 +1,22 @@
 [
   {
-    "pointName": "123",
-    "pointCoordinates": "123"
+    "robotName": "robot1",
+    "robotNumber": "001",
+    "robotIP": "192.168.0.15"
+  },
+  {
+    "robotName": "robot3",
+    "robotNumber": "003",
+    "robotIP": "192.168.0.17"
+  },
+  {
+    "robotName": "robot4",
+    "robotNumber": "004",
+    "robotIP": " 192.168.0.18"
+  },
+  {
+    "robotName": "robot2",
+    "robotNumber": "002",
+    "robotIP": "192.168.0.16"
   }
 ]

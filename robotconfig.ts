@@ -1,0 +1,1 @@
+export let robotNameIP: { [key: string]: string } = {};
