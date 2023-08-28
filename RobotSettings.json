@@ -2,21 +2,13 @@
   {
     "robotName": "robot1",
     "robotNumber": "001",
-    "robotIP": "192.168.0.15"
-  },
-  {
-    "robotName": "robot3",
-    "robotNumber": "003",
-    "robotIP": "192.168.0.17"
-  },
-  {
-    "robotName": "robot4",
-    "robotNumber": "004",
-    "robotIP": " 192.168.0.18"
+    "robotIP": "192.168.0.15",
+    "robotLastOrderPoint": ""
   },
   {
     "robotName": "robot2",
     "robotNumber": "002",
-    "robotIP": "192.168.0.16"
+    "robotIP": "192.168.0.16",
+    "robotLastOrderPoint": ""
   }
 ]

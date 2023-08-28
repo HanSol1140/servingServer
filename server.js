@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,11 +7,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-// import axios from 'axios';
-// import fs from 'fs';
 const cors = require('cors');
 app.use(cors()); // 모든 도메인에서의 요청 허용
 const PORT = process.env.PORT || 8084;
+const robotconfig_1 = require("./robotconfig");
 // 서버 시작
 const server = app.listen(PORT, () => {
     console.log(`Server listening on HTTP port ${PORT}`);
@@ -32,24 +22,31 @@ const mqttClient = (0, mqtthandler_1.initializeMQTT)();
 const routerhandler_1 = __importDefault(require("./routerhandler"));
 app.use('/', routerhandler_1.default);
 // 함수
+// import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
 const func_1 = require("./func");
 // 로봇명 전역변수 설정
-const robotconfig_1 = require("./robotconfig");
-function serverSetup() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const robots = yield (0, func_1.setupRobots)();
-        console.log(robots);
-        robots.forEach(robot => {
-            robotconfig_1.robotNameIP[robot.robotName] = robot.robotIP;
-        });
-        console.log(robotconfig_1.robotNameIP["robot1"]);
-        console.log(robotconfig_1.robotNameIP["robot2"]);
-        console.log(robotconfig_1.robotNameIP["robot3"]);
-        console.log(robotconfig_1.robotNameIP["robot4"]);
-    });
-}
-serverSetup();
-// cancle();
+(0, func_1.serverSetup)();
+setInterval(() => {
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log(robotconfig_1.robotSettings);
+}, 2000);
+setTimeout(() => {
+    for (var i in robotconfig_1.robotSettings) {
+        console.log(i);
+    }
+    // var message = {
+    //     asdf : "movePoint",
+    //     asfd : "robot1",
+    // };
+    // console.log("실행 확인");
+    // mqttClient.publish('servingbot_in', JSON.stringify(message));
+}, 2000);
 // movePoint('192.168.0.15', '1');
 // setTimeout(() => { 
 //     movePoint('192.168.0.15', '6');

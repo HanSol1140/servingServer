@@ -48,12 +48,16 @@ router.post("/api/createrobotlist", (req, res) => __awaiter(void 0, void 0, void
                 robotName: req.body.robotName,
                 robotNumber: req.body.robotNumber,
                 robotIP: req.body.robotIP,
+                robotLastOrderPoint: '',
             };
             const exists1 = data.some(item => item.robotName === req.body.robotName);
             const exists2 = data.some(item => item.robotNumber === req.body.robotNumber);
             if (!exists1) { // 로봇명과 번호에 중복이 없다
                 if (!exists2) {
                     data.push(newData); // 새로운 데이터를 배열에 추가
+                    // 데이터 오름차순 정렬
+                    data.sort((a, b) => a.robotName.localeCompare(b.robotName));
+                    // 데이터 오름차순 정렬 끝
                     const jsonData = JSON.stringify(data, null, 2);
                     fs_1.default.writeFileSync('RobotSettings.json', jsonData); // 동기적으로 파일 작성
                     res.send("저장 완료");
@@ -94,6 +98,10 @@ router.post("/api/updaterobot", (req, res) => __awaiter(void 0, void 0, void 0, 
                     targetRobot.robotName = req.body.newRobotName;
                     targetRobot.robotNumber = req.body.newRobotNumber;
                     targetRobot.robotIP = req.body.newRobotIP;
+                    targetRobot.robotLastOrderPoint = '';
+                    // 데이터 오름차순 정렬
+                    data.sort((a, b) => a.robotName.localeCompare(b.robotName));
+                    // 데이터 오름차순 정렬 끝
                     const jsonData = JSON.stringify(data, null, 2);
                     fs_1.default.writeFileSync('RobotSettings.json', jsonData);
                     res.send("Update successful");
@@ -111,6 +119,7 @@ router.post("/api/updaterobot", (req, res) => __awaiter(void 0, void 0, void 0, 
         console.error('Error with API call:', error);
     }
 }));
+// 로봇 정보 삭제
 router.post("/api/deleterobotlist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!fs_1.default.existsSync('RobotSettings.json')) {
@@ -131,6 +140,7 @@ router.post("/api/deleterobotlist", (req, res) => __awaiter(void 0, void 0, void
         res.status(500).send("Server error");
     }
 }));
+// 로봇 리스트 받아서 브라우저에 출력
 router.get("/api/getrobotlist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     fs_1.default.readFile('RobotSettings.json', 'utf8', (err, fileData) => {
         if (err)
@@ -161,6 +171,7 @@ router.post("/api/createPointList", (req, res) => __awaiter(void 0, void 0, void
             const exists1 = data.some(item => item.pointName === req.body.pointName);
             if (!exists1) { // 포인트명에 중복이 없다.
                 data.push(newData); // 새로운 데이터를 배열에 추가
+                data.sort((a, b) => a.pointName.localeCompare(b.pointName, 'kr'));
                 const jsonData = JSON.stringify(data, null, 2);
                 fs_1.default.writeFileSync('PointSettings.json', jsonData); // 동기적으로 파일 작성
                 res.send("저장 완료");

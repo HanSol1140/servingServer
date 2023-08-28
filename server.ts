@@ -2,12 +2,12 @@
 import express from 'express';
 const app = express();
 app.use(express.json());
-// import axios from 'axios';
-// import fs from 'fs';
 const cors = require('cors');
 app.use(cors()); // 모든 도메인에서의 요청 허용
-
+import axios from 'axios';
 const PORT = process.env.PORT || 8084;
+
+import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
 
 // 서버 시작
 const server = app.listen(PORT, () => {
@@ -25,30 +25,42 @@ app.use('/', routerhandler);
 
 
 // 함수
-import { setupRobots, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test } from './func';
+// import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
+import { setupRobots, setupPoints, serverSetup, cancle, retryMovePoint, charge, checkBattery } from './func';
 
 // 로봇명 전역변수 설정
-import { robotNameIP } from './robotconfig';
-
-interface robotsInfo {
-    robotName: string;
-    robotNumber: string;
-    robotIP: string;
-}
-async function serverSetup(){
-    const robots:robotsInfo[] = await setupRobots();
-    console.log(robots);
-    robots.forEach(robot => {
-        robotNameIP[robot.robotName] = robot.robotIP;
-    });
-    console.log(robotNameIP["robot1"]);
-    console.log(robotNameIP["robot2"]);
-    console.log(robotNameIP["robot3"]);
-    console.log(robotNameIP["robot4"]);
-}
 serverSetup();
 
-// cancle();
+
+setInterval(() => {
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log("==========");
+    console.log(robotSettings);
+},2000);
+
+
+setTimeout(() => {
+
+
+for(var i in robotSettings){
+    console.log(i);
+}
+    // var message = {
+    //     asdf : "movePoint",
+    //     asfd : "robot1",
+    // };
+    // console.log("실행 확인");
+    // mqttClient.publish('servingbot_in', JSON.stringify(message));
+}, 2000);
+
+
+
+
 
 // movePoint('192.168.0.15', '1');
 
