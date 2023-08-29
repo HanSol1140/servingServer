@@ -26,6 +26,7 @@ interface RobotData {
     robotName: string;
     robotNumber: string;
     robotIP: string;
+    robotRunningState: boolean;
     robotLastOrderPoint: string;
 }
 
@@ -44,6 +45,7 @@ router.post("/api/createrobotlist", async (req: Request, res: Response) => {
                 robotName: req.body.robotName,
                 robotNumber: req.body.robotNumber,
                 robotIP: req.body.robotIP,
+                robotRunningState : false,
                 robotLastOrderPoint : '',
             };
             const exists1 = data.some(item => item.robotName === req.body.robotName);
@@ -98,6 +100,7 @@ router.post("/api/updaterobot", async (req: Request, res: Response) => {
                     targetRobot.robotName = req.body.newRobotName;
                     targetRobot.robotNumber = req.body.newRobotNumber;
                     targetRobot.robotIP = req.body.newRobotIP;
+                    targetRobot.robotRunningState = false;
                     targetRobot.robotLastOrderPoint = '';
                     // 데이터 오름차순 정렬
                     data.sort((a, b) => a.robotName.localeCompare(b.robotName));

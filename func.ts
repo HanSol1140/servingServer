@@ -3,7 +3,7 @@ import axios from 'axios';
 import fs from 'fs';
 import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
 
-let state:boolean = false;
+
 
 // 서버 실행시 로봇리스트 받아오기
 export async function setupRobots() {
@@ -41,13 +41,14 @@ interface robotsInfo {
     robotName: string;
     robotNumber: string;
     robotIP: string;
-    robotLastOrderPoint: string;
+    robotRunningState : boolean,
+    robotLastOrderPoint: object
 }
 interface pointsInfo {
     pointName: string;
-    coordinatesX : string;
-    coordinatesY : string;
-    coordinatesTheta : string;
+    coordinatesX: string;
+    coordinatesY: string;
+    coordinatesTheta: string;
 }
 // 서버 실행시 로봇 / 포인트 설정
 export async function serverSetup() {
@@ -56,18 +57,18 @@ export async function serverSetup() {
     const robots: robotsInfo[] = await setupRobots();
     console.log(robots);
     robots.forEach(robot => {
-        setRobotSettings(robot.robotName, robot.robotNumber, robot.robotIP, robot.robotLastOrderPoint);
+        setRobotSettings(robot.robotName, robot.robotNumber, robot.robotIP, robot.robotRunningState, robot.robotLastOrderPoint);
     });
     // console.log(robotSettings["robot1"].robotIP);
     // console.log(robotSettings["robot2"].robotIP);
     // console.log(robotSettings["robot3"]);
     // console.log(robotSettings["robot4"]);
-    
-    
+
+
     // 포인트 좌표 설정
     const points: pointsInfo[] = await setupPoints();
     // console.log(points);
-    
+
     points.forEach(point => {
         setPointCoordinate(point.pointName, point.coordinatesX, point.coordinatesY, point.coordinatesTheta);
     });
@@ -82,53 +83,52 @@ export async function serverSetup() {
 // ────────────────────────────────────────────────────────────────────────────────────────────
 // 서빙봇 이동 API
 // 이동 취소
-export async function cancle(robotName:string) {
-    let ip:string = robotSettings[robotName].robotIP;
+export async function cancle(robotName: string) {
+    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.post(`http://${ip}/cmd/cancel_goal`);
+        const response = await axios.post(`http://${ip.trim()}/cmd/cancel_goal`);
         if (await response.status === 200) {
             console.log(response.data);
         }
 
     } catch (error) {
         console.error('Error with API call:', error);
-        console.log("error : ", error);
     }
 }
 
 // 포인트명으로 이동
-export async function movePoint(robotName:string, point:string) {
-    let ip:string = robotSettings[robotName].robotIP;
+export async function movePoint(robotName: string, point: string) {
+    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.post(`http://${ip}/cmd/nav_point`, {
+        const response = await axios.post(`http://${ip.trim()}/cmd/nav_point`, {
             point: `${point}`
         });
         if (response.status === 200) {
+            // 성공
             console.log(response.data);
             setTimeout(() => {
-                state = true; // 로봇이 출발
-                console.log("state : " + state);
+                robotSettings[robotName].robotRunningState = true; // 로봇이 출발
+                console.log("state : " + robotSettings[robotName].robotRunningState);
             }, 1000);
             // robotSettings[robotName].robotLastOrderPoint에 방금 이동한 point를 저장
             // => 장애물 회피 후 다시 목적지로 보내기 위함
-            robotSettings[robotName].robotLastOrderPoint = point;
+            robotSettings[robotName].robotLastOrderPoint = pointCoordinate[point];
             // console.log(robotSettings[robotName].robotLastOrderPoint);
         }
         // 이동한 포인트 저장 => 로봇별로 저장해야함
     } catch (error) {
         console.error('Error with API call:', error);
-        console.log("error : ", error);
     }
 }
 
 // 좌표로 이동
-export async function moverCoordinates(robotName:string, xstring:string, ystring:string, thetastring:string) {
-    let ip:string = robotSettings[robotName].robotIP;
-    var x:number = Number(xstring);
-    var y:number = Number(ystring);
-    var theta:number = Number(thetastring);
+export async function moverCoordinates(robotName: string, xstring?: string, ystring?: string, thetastring?: string) {
+    let ip: string = robotSettings[robotName].robotIP;
+    var x: number = Number(xstring);
+    var y: number = Number(ystring);
+    var theta: number = Number(thetastring);
     try {
-        const response = await axios.post(`http://${ip}/cmd/nav`, {
+        const response = await axios.post(`http://${ip.trim()}/cmd/nav`, {
             x,
             y,
             theta
@@ -143,24 +143,23 @@ export async function moverCoordinates(robotName:string, xstring:string, ystring
 
 
 // 포인트 재이동
-export async function retryMovePoint(robotName:string) {
+export async function retryMovePoint(robotName: string) {
     // 로봇 회피 후 다시 목적지로 이동할때 사용
     // getPose를 통해 얻은 좌표에서 로봇끼리 일정거리 이하로 접근햇을때
     // 수동 이동(회전, 직진/후진을 직접적으로 명령할 수 있음)후 목적지로 이동지시를 다시하기 위함
     // 회피 동작 후 회피 동작을 수행한 로봇이 실행
     console.log("재이동 요청");
     console.log(robotName); // 서빙봇 명칭
-    // console.log(robotSettings[robotName].robotLastOrderPoint); // 포인트명
-    // console.log(robotSettings[robotName]); // 서빙봇 명칭에 저장된 값 확인
-    // console.log(robotSettings[robotName]); // 명칭에 저장된 객체 확인
-    movePoint(robotName, robotSettings[robotName].robotLastOrderPoint);
+    // console.log(robotSettings[robotName].robotLastOrderPoint); // 포인트에 저장된
+    moverCoordinates(robotName, robotSettings[robotName].robotLastOrderPoint.x, robotSettings[robotName].robotLastOrderPoint.y, robotSettings[robotName].robotLastOrderPoint.theta);
 }
 
 
 
-export async function charge(ip:string, point:string) {
+export async function charge(robotName: string, point: string) {
+    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.post(`http://${ip}/cmd/charge`, {
+        const response = await axios.post(`http://${ip.trim()}/cmd/charge`, {
             type: 1, // 지정된 위치로 이동 후 가까운 충전 포인트를 찾아서 접속함
             point: `${point}`
         });
@@ -170,25 +169,24 @@ export async function charge(ip:string, point:string) {
 
     } catch (error) {
         console.error('Error with API call:', error);
-        console.log("error : ", error);
     }
 }
 
 
-    
-export async function checkBattery(robotName:string) { // 배터리 체크, 이게 일정 이하가 된다면 charge실행
-    let ip:string = robotSettings[robotName].robotIP;
+// 배터리 체크, 이게 일정 이하가 된다면 charge실행
+export async function checkBattery(robotName: string) {  // 로봇이름
+    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.get(`http://${ip}/cmd/base_encode`,);
+        const response = await axios.get(`http://${ip.trim()}/reeman/base_encode`,);
         if (await response.status === 200) {
             console.log(response.data);
+            // console.log(response.data.battery);
+            // return response.data.battery
         }
 
     } catch (error) {
         console.error('Error with API call:', error);
-        console.log("error : ", error);
     }
-    console.log(robotSettings[robotName].robotIP);
 }
 
 // ────────────────────────────────────────────────────────────────────────────────────────────
@@ -199,44 +197,79 @@ type RobotPose = {
     y: number;
     theta: number;
 };
-let robots:RobotPose[] = [];
+
+let robots: RobotPose[] = [];
 let currentRobotIndex;
 
-export async function getPose(ip:string) {
+export async function getPose(robotName: string) {
+    let ip: string = robotSettings[robotName].robotIP;
+
     try {
-        console.log(new Date().toISOString());
         const response = await axios.get(`http://${ip}/reeman/pose`);
         if (response.status === 200) {
             console.log(response.data);
 
-            currentRobotIndex = parseInt(response.data.robotNumber) - 1;
+            currentRobotIndex = parseInt(robotSettings[robotName].robotNumber) - 1;
+
             robots[currentRobotIndex] = {
                 x: response.data.x,
                 y: response.data.y,
                 theta: response.data.theta
             }
-            // console.log(robots[currentRobotIndex].x);
-            var currentX = robots[currentRobotIndex].x;
-            var currentY = robots[currentRobotIndex].y;
-            var currentTheta = robots[currentRobotIndex].theta;
-            var compareX;
-            var compareY;
-            var compareTheta;
-            const tolerance = 0.5 // 해당 값만큼 접근하면 접근 알림 출력
-            for (let i = 0; i < robots.length; i++) {
-                if (i != currentRobotIndex) {  // 비교할 값에서 본인을 제외
-                    compareX = robots[i].x;
-                    compareY = robots[i].y;
-                    compareTheta = robots[i].theta;
-                    if (Math.abs(currentX - compareX) <= tolerance && Math.abs(currentY - compareY) <= tolerance) {
-                        console.log(`${i + 1}번 로봇 근처에 다른 로봇이 있습니다!`);
-                        // 충돌가능성이 있는 로봇을 확인
 
-                        // if()// 이제 로봇의 방향을 확인해서 서로 충돌가능성이 있는지, 있다면 회피로직, 없다면 지시없음
+            const tolerance = 1.5; // 
+
+            for (let i = 0; i < robots.length; i++) {
+                if (i != currentRobotIndex) { // 비교군에서 자신을 제외
+                    // 피타고라스 공식
+                    const dx = robots[currentRobotIndex].x - robots[i].x;
+                    const dy = robots[currentRobotIndex].y - robots[i].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance <= tolerance) {
+                        console.log(`${currentRobotIndex + 1}번 로봇과 ${i + 1}번 로봇 접근`);
+                        const compareTheta = robots[i].theta;
+                        // 충돌 가능성 비교
+                        let angle = Math.abs(robots[currentRobotIndex].theta - compareTheta); // 
+                        // 각도 차이 20도 이하일 때 충돌 위험 판단
+                        // -160 ~ -180도 혹은 160 ~ 180도
+
+                        if ((angle >= 160 && angle <= 180) || (angle <= -160 && angle >= -180)) {
+                            console.log(`${currentRobotIndex + 1}번 로봇과 ${i + 1}번 로봇 충돌 위험!`);
+                            // 충돌 대비 동작
+                            // manualMove(robotSettings[robotName])
+                            // 반복문 시작
+                            const manualMoveInterval = setInterval(() => {
+                                manualMove(robotName);
+                            }, 20);
+                            // 3초후에 종료
+                            setTimeout(() => {
+                                clearInterval(manualMoveInterval);
+                            }, 3000);
+                        }
+
                     }
                 }
             }
         }
+    } catch (error) {
+        console.error('Error with API call:', error);
+    }
+}
+
+// 수동 이동
+// // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함,
+// API설명을 보면 지정한만큼 이동할거같은데 누르고있는식으로 계속 요청을 보내야함
+export async function manualMove(robotName: string){
+    let ip: string = robotSettings[robotName].robotIP;
+    try {
+        const response = await axios.post(`http://${ip}/cmd/speed`,{
+            vx : 0.0,
+            vth : 0.5
+        });
+        if (response.status === 200) {
+            console.log(response.data);
+        }
+
     } catch (error) {
         console.error('Error with API call:', error);
     }
@@ -254,11 +287,12 @@ export default {
     checkBattery: checkBattery,
     getPose: getPose,
     test: test,
+    manualMove: manualMove
 };
 
 //─────────────────────────────────────────────────────────────────────
 
-export async function test(ip:string, x:string, y:string, z:string) {
+export async function test(ip: string, x: string, y: string, z: string) {
     try {
         console.log(new Date().toISOString());
         const response = await axios.post(`http://${ip}/cmd/nav`, {
@@ -307,7 +341,7 @@ export async function test(ip:string, x:string, y:string, z:string) {
 //     }
 // }
 
-// 레이저 데이터 수집 => 근데 이걸 우리가 활용이 가능할지 모르겠음
+// 레이저 데이터 수집 => 근데 이걸 활용이 가능할지 모르겠음
 // async function getLaser(ip){
 //     try {
 //         console.log(new Date().toISOString());
@@ -320,21 +354,3 @@ export async function test(ip:string, x:string, y:string, z:string) {
 //     }
 // }
 
-// 수동 이동
-// // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함,
-// API설명을 보면 지정한만큼 이동할거같은데 누르고있는식으로 계속 요청을 보내야함
-// async function speedcheck(){
-//     try {
-//         const response = await axios.post(`http://192.168.0.13/cmd/speed`,{
-//             vx : 1,
-//             vth : 0
-//         });
-//         if (await response.status === 200) {
-//             console.log(response.data);
-//         }
-
-//     } catch (error) {
-//         console.error('Error with API call:', error);
-//         console.log("error : ", error);
-//     }
-// }

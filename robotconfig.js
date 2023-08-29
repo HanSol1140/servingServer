@@ -1,12 +1,13 @@
 "use strict";
+// robotconfig.ts
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setPointCoordinate = exports.pointCoordinate = exports.setRobotSettings = exports.robotSettings = void 0;
-// robotconfig.ts
 exports.robotSettings = {};
-function setRobotSettings(name, robotNumber, robotIP, robotLastOrderPoint) {
-    exports.robotSettings[name] = { robotNumber, robotIP, robotLastOrderPoint };
+function setRobotSettings(name, robotNumber, robotIP, robotRunningState, robotLastOrderPoint) {
+    exports.robotSettings[name] = { robotNumber, robotIP, robotRunningState, robotLastOrderPoint };
 }
 exports.setRobotSettings = setRobotSettings;
+// pointCoordinate
 exports.pointCoordinate = {};
 function setPointCoordinate(pointName, x, y, theta) {
     exports.pointCoordinate[pointName] = { x, y, theta };

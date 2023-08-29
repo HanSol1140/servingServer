@@ -26,37 +26,48 @@ app.use('/', routerhandler);
 
 // 함수
 // import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
-import { setupRobots, setupPoints, serverSetup, cancle, retryMovePoint, charge, checkBattery } from './func';
+import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove } from './func';
 
 // 로봇명 전역변수 설정
 serverSetup();
 
-
+// 10분마다 배터리 잔량 체크
 setInterval(() => {
-    console.log("==========");
-    console.log("==========");
-    console.log("==========");
-    console.log("==========");
-    console.log("==========");
-    console.log("==========");
-    console.log("==========");
-    console.log(robotSettings);
-},2000);
+    for(var i in robotSettings){
+        console.log(i);
+        const battery = checkBattery("robot1");
+        var message = {
+            robotName : `${i}`,
+            battery : `${battery}`,
+        };
+        mqttClient.publish('mainserver', JSON.stringify(message));
+    }
+}, 1000);
+// }, 1000);
 
 
-setTimeout(() => {
+// 현재 좌표 메인서버로 계속 전송
+// setInterval(() =>{
+//     for(var i in robotSettings){
+//         getPose(i);
+//         console.log(i);
+//     }
+    
+//     manualMove("robot1");
+// }, 20);
 
-
-for(var i in robotSettings){
-    console.log(i);
-}
-    // var message = {
-    //     asdf : "movePoint",
-    //     asfd : "robot1",
-    // };
-    // console.log("실행 확인");
-    // mqttClient.publish('servingbot_in', JSON.stringify(message));
-}, 2000);
+// setTimeout(() => {
+// for(var i in robotSettings){
+//     console.log(i);
+//     console.log(robotSettings[i]);
+// }
+//     // var message = {
+//     //     asdf : "movePoint",
+//     //     asfd : "robot1",
+//     // };
+//     // console.log("실행 확인");
+//     // mqttClient.publish('servingbot_in', JSON.stringify(message));
+// }, 2000);
 
 
 

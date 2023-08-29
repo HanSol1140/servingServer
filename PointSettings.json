@@ -1,20 +1,74 @@
 [
   {
     "pointName": "1",
-    "coordinatesX": "100.00",
-    "coordinatesY": "100.00",
-    "coordinatesTheta": "100.00"
+    "coordinatesX": "0.13",
+    "coordinatesY": "0.03",
+    "coordinatesTheta": "155.96"
+  },
+  {
+    "pointName": "10",
+    "coordinatesX": "-0.33",
+    "coordinatesY": "0.19",
+    "coordinatesTheta": "155.22"
+  },
+  {
+    "pointName": "11",
+    "coordinatesX": "-2.04",
+    "coordinatesY": "1.04",
+    "coordinatesTheta": "149.20"
   },
   {
     "pointName": "2",
-    "coordinatesX": "100.00",
-    "coordinatesY": "100.00",
-    "coordinatesTheta": "100.00"
+    "coordinatesX": "-0.89",
+    "coordinatesY": "-0.03",
+    "coordinatesTheta": "154.80"
   },
   {
     "pointName": "3",
-    "coordinatesX": "100.00",
-    "coordinatesY": "100.00",
-    "coordinatesTheta": "100.00"
+    "coordinatesX": "-1.42",
+    "coordinatesY": "0.20",
+    "coordinatesTheta": "155.06"
+  },
+  {
+    "pointName": "4",
+    "coordinatesX": "-2.02",
+    "coordinatesY": "0.41",
+    "coordinatesTheta": "151.48"
+  },
+  {
+    "pointName": "5",
+    "coordinatesX": "-1.19",
+    "coordinatesY": "0.06",
+    "coordinatesTheta": "151.86"
+  },
+  {
+    "pointName": "6",
+    "coordinatesX": "-2.46",
+    "coordinatesY": "0.65",
+    "coordinatesTheta": "152.30"
+  },
+  {
+    "pointName": "7",
+    "coordinatesX": "-1.68",
+    "coordinatesY": "0.27",
+    "coordinatesTheta": "161.18"
+  },
+  {
+    "pointName": "9",
+    "coordinatesX": "-0.61",
+    "coordinatesY": "0.33",
+    "coordinatesTheta": "153.75"
+  },
+  {
+    "pointName": "charging_pile",
+    "coordinatesX": "0.23",
+    "coordinatesY": "0.33",
+    "coordinatesTheta": "172.48"
+  },
+  {
+    "pointName": "production_point",
+    "coordinatesX": "-2.14",
+    "coordinatesY": "2.09",
+    "coordinatesTheta": "-119.74"
   }
 ]

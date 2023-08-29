@@ -53,10 +53,30 @@ function initializeMQTT() {
                 console.log("movePoint request");
                 // console.log(robotSettings[data.robotName]); // 서빙봇 정보
                 console.log(robotconfig_1.robotSettings[data.robotName]); // IP
-                yield (0, func_1.movePoint)(data.robotName, data.point);
-                setTimeout(() => {
-                    (0, func_1.retryMovePoint)("robot1");
-                }, 2000);
+                (0, func_1.movePoint)(data.robotName, data.point);
+                //
+                // var message = {
+                //     servingAPI : "movePoint",
+                //     robotName : "robot1",
+                //     point : "11",
+                //   };
+                // client.publish('servingbot_in', JSON.stringify(message));
+                //
+            }
+            // movePoint => robotAPI : movePoint & 서빙봇 이름 => 정해진 포인트로 해당 로봇을 이동
+            if (data.servingAPI == "retryMovePoint" && data.robotName && data.point) {
+                console.log("movePoint request");
+                // console.log(robotSettings[data.robotName]); // 서빙봇 정보
+                console.log(robotconfig_1.robotSettings[data.robotName]); // IP
+                (0, func_1.retryMovePoint)(data.robotName);
+                //
+                // var message = {
+                //     servingAPI : "movePoint",
+                //     robotName : "robot1",
+                //     point : "11",
+                //   };
+                // client.publish('servingbot_in', JSON.stringify(message));
+                //
             }
             // moverCoordinates => 좌표 지정 이동 
             if (data.servingAPI == "moverCoordinates" && data.robotName && data.coordinatesX !== undefined && data.coordinatesY !== undefined && data.coordinatesTheta !== undefined) {
@@ -67,9 +87,30 @@ function initializeMQTT() {
                 const radians = String((data.coordinatesX * Math.PI) / 180);
                 console.log(radians);
                 console.log("moverCoordinates request");
-                // console.log(robotSettings[data.robotName]); // 서빙봇 정보
                 console.log(robotconfig_1.robotSettings[data.robotName]); // IP
                 (0, func_1.moverCoordinates)(data.robotName, data.coordinatesX, data.coordinatesY, radians);
+                // var message = {
+                //     servingAPI : "moverCoordinates",
+                //     robotName : "robot1",
+                //     coordinatesX : "0.11",
+                //     coordinatesY : "1.22",
+                //     coordinatesTheta : "20",
+                //   };
+                // client.publish('servingbot_in', JSON.stringify(message));
+            }
+            // charge => 배터리 충전
+            if (data.servingAPI == "charge" && data.robotName && data.point) {
+                console.log("charge request");
+                console.log(robotconfig_1.robotSettings[data.robotName]); // IP
+                (0, func_1.charge)(data.robotName, data.point);
+                //
+                // var message = {
+                //     servingAPI : "charge",
+                //     robotName : "robot1",
+                //     point : "11",
+                //   };
+                // client.publish('servingbot_in', JSON.stringify(message));
+                //
             }
         });
     });

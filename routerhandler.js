@@ -48,6 +48,7 @@ router.post("/api/createrobotlist", (req, res) => __awaiter(void 0, void 0, void
                 robotName: req.body.robotName,
                 robotNumber: req.body.robotNumber,
                 robotIP: req.body.robotIP,
+                robotRunningState: false,
                 robotLastOrderPoint: '',
             };
             const exists1 = data.some(item => item.robotName === req.body.robotName);
@@ -98,6 +99,7 @@ router.post("/api/updaterobot", (req, res) => __awaiter(void 0, void 0, void 0, 
                     targetRobot.robotName = req.body.newRobotName;
                     targetRobot.robotNumber = req.body.newRobotNumber;
                     targetRobot.robotIP = req.body.newRobotIP;
+                    targetRobot.robotRunningState = false;
                     targetRobot.robotLastOrderPoint = '';
                     // 데이터 오름차순 정렬
                     data.sort((a, b) => a.robotName.localeCompare(b.robotName));

@@ -3,7 +3,7 @@ import mqtt from 'mqtt';
 import axios from 'axios';
 import fs from 'fs';
 import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
-import { cancle, movePoint, moverCoordinates, retryMovePoint, charge, checkBattery, getPose, test } from './func';
+import { cancle, movePoint, moverCoordinates, retryMovePoint, charge, getPose } from './func';
 export function initializeMQTT() {
     const mqttClient = mqtt.connect('mqtt://192.168.0.137:1883');
     mqttClient.on('error', function (err) {
@@ -44,13 +44,35 @@ export function initializeMQTT() {
             console.log("movePoint request");
             // console.log(robotSettings[data.robotName]); // 서빙봇 정보
             console.log(robotSettings[data.robotName]); // IP
-            await movePoint(data.robotName, data.point);
-            setTimeout(()=>{
-                retryMovePoint("robot1");
-            }, 2000);
+            movePoint(data.robotName, data.point);
+            //
+            // var message = {
+            //     servingAPI : "movePoint",
+            //     robotName : "robot1",
+            //     point : "11",
+            //   };
+            // client.publish('servingbot_in', JSON.stringify(message));
+            //
+
         }
 
-        
+        // movePoint => robotAPI : movePoint & 서빙봇 이름 => 정해진 포인트로 해당 로봇을 이동
+        if (data.servingAPI == "retryMovePoint" && data.robotName && data.point) {
+            console.log("movePoint request");
+            // console.log(robotSettings[data.robotName]); // 서빙봇 정보
+            console.log(robotSettings[data.robotName]); // IP
+            retryMovePoint(data.robotName);
+            //
+            // var message = {
+            //     servingAPI : "movePoint",
+            //     robotName : "robot1",
+            //     point : "11",
+            //   };
+            // client.publish('servingbot_in', JSON.stringify(message));
+            //
+
+        }
+
         // moverCoordinates => 좌표 지정 이동 
         if (data.servingAPI == "moverCoordinates" && data.robotName && data.coordinatesX !== undefined && data.coordinatesY !== undefined && data.coordinatesTheta !== undefined) {
             // theta는 radian으로 계산해야함
@@ -60,11 +82,33 @@ export function initializeMQTT() {
             const radians = String((data.coordinatesX * Math.PI) / 180);
             console.log(radians);
             console.log("moverCoordinates request");
-            // console.log(robotSettings[data.robotName]); // 서빙봇 정보
             console.log(robotSettings[data.robotName]); // IP
             moverCoordinates(data.robotName, data.coordinatesX, data.coordinatesY, radians);
+            // var message = {
+            //     servingAPI : "moverCoordinates",
+            //     robotName : "robot1",
+            //     coordinatesX : "0.11",
+            //     coordinatesY : "1.22",
+            //     coordinatesTheta : "20",
+            //   };
+            // client.publish('servingbot_in', JSON.stringify(message));
         }
 
+        // charge => 배터리 충전
+        if (data.servingAPI == "charge" && data.robotName && data.point) {
+            console.log("charge request");
+            console.log(robotSettings[data.robotName]); // IP
+            charge(data.robotName, data.point);
+
+            //
+            // var message = {
+            //     servingAPI : "charge",
+            //     robotName : "robot1",
+            //     point : "11",
+            //   };
+            // client.publish('servingbot_in', JSON.stringify(message));
+            //
+        }
         
 
     });
