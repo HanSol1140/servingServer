@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.test = exports.manualMove = exports.getPose = exports.checkBattery = exports.charge = exports.retryMovePoint = exports.moverCoordinates = exports.movePoint = exports.cancle = exports.serverSetup = exports.setupPoints = exports.setupRobots = void 0;
+exports.test = exports.manualMove = exports.manualTurn = exports.getPose = exports.checkBattery = exports.charge = exports.retryMovePoint = exports.moverCoordinates = exports.movePoint = exports.cancle = exports.serverSetup = exports.setupPoints = exports.setupRobots = void 0;
 // func.ts
 const axios_1 = __importDefault(require("axios"));
 const fs_1 = __importDefault(require("fs"));
@@ -158,7 +158,7 @@ function retryMovePoint(robotName) {
         // 수동 이동(회전, 직진/후진을 직접적으로 명령할 수 있음)후 목적지로 이동지시를 다시하기 위함
         // 회피 동작 후 회피 동작을 수행한 로봇이 실행
         console.log("재이동 요청");
-        console.log(robotName); // 서빙봇 명칭
+        console.log(robotName + "로봇 재이동"); // 서빙봇 명칭
         // console.log(robotSettings[robotName].robotLastOrderPoint); // 포인트에 저장된
         moverCoordinates(robotName, robotconfig_1.robotSettings[robotName].robotLastOrderPoint.x, robotconfig_1.robotSettings[robotName].robotLastOrderPoint.y, robotconfig_1.robotSettings[robotName].robotLastOrderPoint.theta);
     });
@@ -202,20 +202,22 @@ function checkBattery(robotName) {
 exports.checkBattery = checkBattery;
 let robots = [];
 let currentRobotIndex;
+let state = false;
 function getPose(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
         let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
             const response = yield axios_1.default.get(`http://${ip}/reeman/pose`);
             if (response.status === 200) {
-                console.log(response.data);
+                // console.log((robotSettings[robotName].robotNumber) + "번 로봇 좌표");
+                // console.log(response.data); // theta 는 radian이라서 변환이 필요함
                 currentRobotIndex = parseInt(robotconfig_1.robotSettings[robotName].robotNumber) - 1;
                 robots[currentRobotIndex] = {
                     x: response.data.x,
                     y: response.data.y,
-                    theta: response.data.theta
+                    theta: response.data.theta * (180 / Math.PI)
                 };
-                const tolerance = 1.5; // 
+                const tolerance = 2.0; // 
                 for (let i = 0; i < robots.length; i++) {
                     if (i != currentRobotIndex) { // 비교군에서 자신을 제외
                         // 피타고라스 공식
@@ -223,24 +225,42 @@ function getPose(robotName) {
                         const dy = robots[currentRobotIndex].y - robots[i].y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         if (distance <= tolerance) {
-                            console.log(`${currentRobotIndex + 1}번 로봇과 ${i + 1}번 로봇 접근`);
+                            // console.log(`${currentRobotIndex + 1}번 로봇과 ${i + 1}번 로봇 접근`);
                             const compareTheta = robots[i].theta;
                             // 충돌 가능성 비교
                             let angle = Math.abs(robots[currentRobotIndex].theta - compareTheta); // 
                             // 각도 차이 20도 이하일 때 충돌 위험 판단
                             // -160 ~ -180도 혹은 160 ~ 180도
-                            if ((angle >= 160 && angle <= 180) || (angle <= -160 && angle >= -180)) {
-                                console.log(`${currentRobotIndex + 1}번 로봇과 ${i + 1}번 로봇 충돌 위험!`);
+                            if ((angle >= 150 && angle <= 180) || (angle <= -150 && angle >= -180)) {
                                 // 충돌 대비 동작
-                                // manualMove(robotSettings[robotName])
-                                // 반복문 시작
-                                const manualMoveInterval = setInterval(() => {
-                                    manualMove(robotName);
-                                }, 20);
-                                // 3초후에 종료
-                                setTimeout(() => {
-                                    clearInterval(manualMoveInterval);
-                                }, 3000);
+                                if (state == false) {
+                                    console.log(`${currentRobotIndex + 1}번 로봇과 ${i + 1}번 로봇 충돌 위험!`);
+                                    state = true;
+                                    // 반복문 시작
+                                    // cancle(robotName);
+                                    //1초간 방향전환
+                                    const manualTurnInterval = setInterval(() => {
+                                        manualTurn(robotName);
+                                    }, 20);
+                                    setTimeout(() => {
+                                        clearInterval(manualTurnInterval);
+                                    }, 500);
+                                    // 1초 뒤에 앞으로 이동시작
+                                    // 이동을 시작하면 2초뒤에 멈춤
+                                    setTimeout(() => {
+                                        const manualMoveInterval = setInterval(() => {
+                                            manualMove(robotName);
+                                        }, 20);
+                                        setTimeout(() => {
+                                            clearInterval(manualMoveInterval);
+                                        }, 2000);
+                                    }, 1050);
+                                    setTimeout(() => {
+                                        retryMovePoint(robotName);
+                                        state = false;
+                                        console.log("state : false");
+                                    }, 3600);
+                                }
                             }
                         }
                     }
@@ -256,13 +276,31 @@ exports.getPose = getPose;
 // 수동 이동
 // // 전진,회전 setInterval로 누르고 있는 식으로 반복해야 제대로 동작함,
 // API설명을 보면 지정한만큼 이동할거같은데 누르고있는식으로 계속 요청을 보내야함
-function manualMove(robotName) {
+function manualTurn(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
         let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
             const response = yield axios_1.default.post(`http://${ip}/cmd/speed`, {
                 vx: 0.0,
-                vth: 0.5
+                vth: 0.1
+            });
+            if (response.status === 200) {
+                console.log(response.data);
+            }
+        }
+        catch (error) {
+            console.error('Error with API call:', error);
+        }
+    });
+}
+exports.manualTurn = manualTurn;
+function manualMove(robotName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let ip = robotconfig_1.robotSettings[robotName].robotIP;
+        try {
+            const response = yield axios_1.default.post(`http://${ip}/cmd/speed`, {
+                vx: 0,
+                vth: 1
             });
             if (response.status === 200) {
                 console.log(response.data);
@@ -286,7 +324,8 @@ exports.default = {
     checkBattery: checkBattery,
     getPose: getPose,
     test: test,
-    manualMove: manualMove
+    manualMove: manualMove,
+    manualTurn: manualTurn
 };
 //─────────────────────────────────────────────────────────────────────
 function test(ip, x, y, z) {

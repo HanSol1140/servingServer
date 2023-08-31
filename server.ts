@@ -26,7 +26,7 @@ app.use('/', routerhandler);
 
 // 함수
 // import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
-import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove } from './func';
+import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove, manualTurn } from './func';
 
 // 로봇명 전역변수 설정
 serverSetup();
@@ -35,26 +35,28 @@ serverSetup();
 setInterval(() => {
     for(var i in robotSettings){
         console.log(i);
-        const battery = checkBattery("robot1");
+        const battery = checkBattery(i);
         var message = {
             robotName : `${i}`,
             battery : `${battery}`,
         };
         mqttClient.publish('mainserver', JSON.stringify(message));
     }
-}, 1000);
-// }, 1000);
-
+}, 600000);
 
 // 현재 좌표 메인서버로 계속 전송
-// setInterval(() =>{
-//     for(var i in robotSettings){
-//         getPose(i);
-//         console.log(i);
-//     }
+setInterval(() =>{
+    for(var i in robotSettings){
+        getPose(i);
+        // manualTurn(i);
+    }
+}, 33);
+
+for(var i in robotSettings){
+    // getPose(i);
     
-//     manualMove("robot1");
-// }, 20);
+}
+
 
 // setTimeout(() => {
 // for(var i in robotSettings){
@@ -165,12 +167,14 @@ setInterval(() => {
 //250도 -> 프로그램 153.55
 
 
-//Theta 계산
-// const degrees = 178;
-// const radians = (degrees * Math.PI) / 180;
-// console.log(radians);
-
-
+//Theta 계산 // 각도 => Theta
+const degrees = -159.85;
+const radians = (degrees * Math.PI) / 180;
+console.log(radians);
+// Theta => 각도로 재변환
+// Theta * (180 / Math.PI);
+const degreesFromRadians = radians * (180 / Math.PI);
+console.log(degreesFromRadians);
 
 
 // moverCoordinates('192.168.0.15', 0.0, 0.0, 0);
