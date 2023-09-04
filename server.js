@@ -42,12 +42,8 @@ setInterval(() => {
 setInterval(() => {
     for (var i in robotconfig_1.robotSettings) {
         (0, func_1.getPose)(i);
-        // manualTurn(i);
     }
 }, 33);
-for (var i in robotconfig_1.robotSettings) {
-    // getPose(i);
-}
 // setTimeout(() => {
 // for(var i in robotSettings){
 //     console.log(i);

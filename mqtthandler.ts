@@ -36,6 +36,13 @@ export function initializeMQTT() {
             // console.log(robotSettings[data.robotName]); // 서빙봇 정보
             console.log(robotSettings[data.robotName].robotIP); // IP
             cancle(data.robotName);
+            //
+            // var message = {
+            //     servingAPI : "cancle",
+            //     robotName : "robot1",
+            //   };
+            // client.publish('servingbot_in', JSON.stringify(message));
+            //
         }
 
 

@@ -31,31 +31,26 @@ import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, man
 // 로봇명 전역변수 설정
 serverSetup();
 
+
 // 10분마다 배터리 잔량 체크
 setInterval(() => {
-    for(var i in robotSettings){
+    for (var i in robotSettings) {
         console.log(i);
         const battery = checkBattery(i);
         var message = {
-            robotName : `${i}`,
-            battery : `${battery}`,
+            robotName: `${i}`,
+            battery: `${battery}`,
         };
         mqttClient.publish('mainserver', JSON.stringify(message));
     }
 }, 600000);
 
 // 현재 좌표 메인서버로 계속 전송
-setInterval(() =>{
-    for(var i in robotSettings){
+setInterval(() => {
+    for (var i in robotSettings) {
         getPose(i);
-        // manualTurn(i);
     }
 }, 33);
-
-for(var i in robotSettings){
-    // getPose(i);
-    
-}
 
 
 // setTimeout(() => {
@@ -85,12 +80,12 @@ for(var i in robotSettings){
 // test();
 
 // setInterval(() => {
-    // getPose('192.168.0.15');
-    // moverCoordinates('192.168.0.15', 0.17, -0.03, 65,06)
-    // test('192.168.0.137:8002');
-    // test('192.168.0.137:8003');
-    // test('192.168.0.137:8004');
-    // test('192.168.0.137:8005');
+// getPose('192.168.0.15');
+// moverCoordinates('192.168.0.15', 0.17, -0.03, 65,06)
+// test('192.168.0.137:8002');
+// test('192.168.0.137:8003');
+// test('192.168.0.137:8004');
+// test('192.168.0.137:8005');
 // }, 30);
 
 // setTimeout(() => {
@@ -112,7 +107,7 @@ for(var i in robotSettings){
 //     setTimeout(() => {
 //         movePoint('192.168.0.15', '1');
 //     },10);
-    
+
 //     setTimeout(() => {
 //         movePoint('192.168.0.15', '2');
 //     },7000);
