@@ -29,7 +29,7 @@ function initializeMQTT() {
         console.log("MQTT client is trying to reconnect");
     });
     mqttClient.on('connect', function () {
-        mqttClient.subscribe('servingbot_in', function (err) {
+        mqttClient.subscribe('servingserver', function (err) {
             if (!err) {
                 console.log('Connected to MQTT broker');
             }
@@ -47,6 +47,13 @@ function initializeMQTT() {
                 // console.log(robotSettings[data.robotName]); // 서빙봇 정보
                 console.log(robotconfig_1.robotSettings[data.robotName].robotIP); // IP
                 (0, func_1.cancle)(data.robotName);
+                //
+                // var message = {
+                //     servingAPI : "cancle",
+                //     robotName : "robot1",
+                //   };
+                // client.publish('servingserver', JSON.stringify(message));
+                //
             }
             // movePoint => robotAPI : movePoint & 서빙봇 이름 => 정해진 포인트로 해당 로봇을 이동
             if (data.servingAPI == "movePoint" && data.robotName && data.point) {
@@ -60,7 +67,7 @@ function initializeMQTT() {
                 //     robotName : "robot1",
                 //     point : "11",
                 //   };
-                // client.publish('servingbot_in', JSON.stringify(message));
+                // client.publish('servingserver', JSON.stringify(message));
                 //
             }
             // movePoint => robotAPI : movePoint & 서빙봇 이름 => 정해진 포인트로 해당 로봇을 이동
@@ -75,7 +82,7 @@ function initializeMQTT() {
                 //     robotName : "robot1",
                 //     point : "11",
                 //   };
-                // client.publish('servingbot_in', JSON.stringify(message));
+                // client.publish('servingserver', JSON.stringify(message));
                 //
             }
             // moverCoordinates => 좌표 지정 이동 
@@ -96,7 +103,7 @@ function initializeMQTT() {
                 //     coordinatesY : "1.22",
                 //     coordinatesTheta : "20",
                 //   };
-                // client.publish('servingbot_in', JSON.stringify(message));
+                // client.publish('servingserver', JSON.stringify(message));
             }
             // charge => 배터리 충전
             if (data.servingAPI == "charge" && data.robotName && data.point) {
@@ -109,7 +116,7 @@ function initializeMQTT() {
                 //     robotName : "robot1",
                 //     point : "11",
                 //   };
-                // client.publish('servingbot_in', JSON.stringify(message));
+                // client.publish('servingserver', JSON.stringify(message));
                 //
             }
         });

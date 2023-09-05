@@ -1,74 +1,50 @@
 [
   {
+    "pointName": "0",
+    "coordinatesX": "-0.03",
+    "coordinatesY": "-0.02",
+    "coordinatesTheta": "-0.12"
+  },
+  {
     "pointName": "1",
-    "coordinatesX": "0.13",
-    "coordinatesY": "0.03",
-    "coordinatesTheta": "155.96"
-  },
-  {
-    "pointName": "10",
-    "coordinatesX": "-0.33",
-    "coordinatesY": "0.19",
-    "coordinatesTheta": "155.22"
-  },
-  {
-    "pointName": "11",
-    "coordinatesX": "-2.04",
-    "coordinatesY": "1.04",
-    "coordinatesTheta": "149.20"
+    "coordinatesX": "-1.03",
+    "coordinatesY": "-0.15",
+    "coordinatesTheta": "0.98"
   },
   {
     "pointName": "2",
-    "coordinatesX": "-0.89",
+    "coordinatesX": "3.09",
     "coordinatesY": "-0.03",
-    "coordinatesTheta": "154.80"
-  },
-  {
-    "pointName": "3",
-    "coordinatesX": "-1.42",
-    "coordinatesY": "0.20",
-    "coordinatesTheta": "155.06"
+    "coordinatesTheta": "180.00"
   },
   {
     "pointName": "4",
-    "coordinatesX": "-2.02",
-    "coordinatesY": "0.41",
-    "coordinatesTheta": "151.48"
+    "coordinatesX": "2.36",
+    "coordinatesY": "7.53",
+    "coordinatesTheta": "-90.00"
   },
   {
     "pointName": "5",
-    "coordinatesX": "-1.19",
-    "coordinatesY": "0.06",
-    "coordinatesTheta": "151.86"
+    "coordinatesX": "2.30",
+    "coordinatesY": "-0.39",
+    "coordinatesTheta": "90.78"
   },
   {
-    "pointName": "6",
-    "coordinatesX": "-2.46",
-    "coordinatesY": "0.65",
-    "coordinatesTheta": "152.30"
+    "pointName": "test1",
+    "coordinatesX": "2.63",
+    "coordinatesY": "1.11",
+    "coordinatesTheta": "89.26"
   },
   {
-    "pointName": "7",
-    "coordinatesX": "-1.68",
-    "coordinatesY": "0.27",
-    "coordinatesTheta": "161.18"
+    "pointName": "test2",
+    "coordinatesX": "1.27",
+    "coordinatesY": "4.40",
+    "coordinatesTheta": "57.95"
   },
   {
-    "pointName": "9",
-    "coordinatesX": "-0.61",
-    "coordinatesY": "0.33",
-    "coordinatesTheta": "153.75"
-  },
-  {
-    "pointName": "charging_pile",
-    "coordinatesX": "0.23",
-    "coordinatesY": "0.33",
-    "coordinatesTheta": "172.48"
-  },
-  {
-    "pointName": "production_point",
-    "coordinatesX": "-2.14",
-    "coordinatesY": "2.09",
-    "coordinatesTheta": "-119.74"
+    "pointName": "test3",
+    "coordinatesX": "2.62",
+    "coordinatesY": "6.46",
+    "coordinatesTheta": "-90.95"
   }
 ]

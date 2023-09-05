@@ -26,7 +26,7 @@ app.use('/', routerhandler);
 
 // 함수
 // import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
-import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove, manualTurn } from './func';
+import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove, manualTurn, test, movePoint, moverCoordinates } from './func';
 
 // 로봇명 전역변수 설정
 serverSetup();
@@ -46,11 +46,22 @@ setInterval(() => {
 }, 600000);
 
 // 현재 좌표 메인서버로 계속 전송
-setInterval(() => {
-    for (var i in robotSettings) {
-        getPose(i);
-    }
-}, 33);
+
+// setInterval(() => {
+//     for (var i in robotSettings) {
+//         manualMove(i);
+//     }
+// }, 33);
+
+
+movePoint("robot1", "test3");
+setTimeout(()=>{
+    moverCoordinates("robot1", "1.27", "4.40", "57.95");
+},5000)
+setTimeout(()=>{
+    movePoint("robot1", "test3");
+},8000)
+
 
 
 // setTimeout(() => {

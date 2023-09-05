@@ -16,7 +16,7 @@ export function initializeMQTT() {
         console.log("MQTT client is trying to reconnect");
     });
     mqttClient.on('connect', function () {
-        mqttClient.subscribe('servingbot_in', function (err) {
+        mqttClient.subscribe('servingserver', function (err) {
             if (!err) {
                 console.log('Connected to MQTT broker');
             }
@@ -41,7 +41,7 @@ export function initializeMQTT() {
             //     servingAPI : "cancle",
             //     robotName : "robot1",
             //   };
-            // client.publish('servingbot_in', JSON.stringify(message));
+            // client.publish('servingserver', JSON.stringify(message));
             //
         }
 
@@ -58,7 +58,7 @@ export function initializeMQTT() {
             //     robotName : "robot1",
             //     point : "11",
             //   };
-            // client.publish('servingbot_in', JSON.stringify(message));
+            // client.publish('servingserver', JSON.stringify(message));
             //
 
         }
@@ -75,7 +75,7 @@ export function initializeMQTT() {
             //     robotName : "robot1",
             //     point : "11",
             //   };
-            // client.publish('servingbot_in', JSON.stringify(message));
+            // client.publish('servingserver', JSON.stringify(message));
             //
 
         }
@@ -98,7 +98,7 @@ export function initializeMQTT() {
             //     coordinatesY : "1.22",
             //     coordinatesTheta : "20",
             //   };
-            // client.publish('servingbot_in', JSON.stringify(message));
+            // client.publish('servingserver', JSON.stringify(message));
         }
 
         // charge => 배터리 충전
@@ -113,7 +113,7 @@ export function initializeMQTT() {
             //     robotName : "robot1",
             //     point : "11",
             //   };
-            // client.publish('servingbot_in', JSON.stringify(message));
+            // client.publish('servingserver', JSON.stringify(message));
             //
         }
         
