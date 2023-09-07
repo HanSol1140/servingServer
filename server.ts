@@ -26,7 +26,7 @@ app.use('/', routerhandler);
 
 // 함수
 // import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
-import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove, manualTurn, movePoint, moverCoordinates, getLaser } from './func';
+import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove, manualTurn, movePoint, moverCoordinates, test } from './func';
 
 // 로봇명 전역변수 설정
 serverSetup();
@@ -49,7 +49,7 @@ setInterval(() => {
 
 setInterval(() => {
     for (var i in robotSettings) {
-        getPose(i);
+        test(i);
     }
 }, 33);
 
