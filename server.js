@@ -21,7 +21,6 @@ const mqttClient = (0, mqtthandler_1.initializeMQTT)();
 // 라우터
 const routerhandler_1 = __importDefault(require("./routerhandler"));
 app.use('/', routerhandler_1.default);
-// 함수
 // import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
 const func_1 = require("./func");
 // 로봇명 전역변수 설정
