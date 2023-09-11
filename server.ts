@@ -24,7 +24,7 @@ import routerhandler from './routerhandler';
 app.use('/', routerhandler);
 
 
-// 함수
+
 // import { setupRobots, setupPoints, serverSetup, cancle, movePoint, moverCoordinates, charge, checkBattery, getPose, test, retryMovePoint } from './func';
 import { serverSetup, cancle, retryMovePoint, charge, checkBattery, getPose, manualMove, manualTurn, movePoint, moverCoordinates, test } from './func';
 
@@ -46,12 +46,6 @@ setInterval(() => {
 }, 600000);
 
 // 현재 좌표 메인서버로 계속 전송
-
-setInterval(() => {
-    for (var i in robotSettings) {
-        test(i);
-    }
-}, 33);
 
 
 

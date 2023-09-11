@@ -39,11 +39,6 @@ setInterval(() => {
     }
 }, 600000);
 // 현재 좌표 메인서버로 계속 전송
-setInterval(() => {
-    for (var i in robotconfig_1.robotSettings) {
-        (0, func_1.test)(i);
-    }
-}, 33);
 // setTimeout(() => {
 // for(var i in robotSettings){
 //     console.log(i);
