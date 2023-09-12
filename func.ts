@@ -190,6 +190,23 @@ export async function checkBattery(robotName: string) {  // 로봇이름
     }
 }
 
+//속도 변경
+//기본적인 작동테스트만함, 추가코딩필요
+export async function changeSpeed() {
+    try {
+        const response = await axios.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
+            max_vel:1
+        });
+        if (response.status === 200) {
+            console.log(response.data);
+            console.log("test");
+        }
+
+    } catch (error) {
+        console.error('Error', error);
+    }
+} 
+
 // ────────────────────────────────────────────────────────────────────────────────────────────
 
 type robotType = {

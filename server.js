@@ -1,16 +1,26 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.test2 = exports.manualTurn2 = void 0;
 // server.ts
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const cors = require('cors');
 app.use(cors()); // 모든 도메인에서의 요청 허용
+const axios_1 = __importDefault(require("axios"));
 const PORT = process.env.PORT || 8084;
-const robotconfig_1 = require("./robotconfig");
 // 서버 시작
 const server = app.listen(PORT, () => {
     console.log(`Server listening on HTTP port ${PORT}`);
@@ -26,18 +36,59 @@ const func_1 = require("./func");
 // 로봇명 전역변수 설정
 (0, func_1.serverSetup)();
 // 10분마다 배터리 잔량 체크
-setInterval(() => {
-    for (var i in robotconfig_1.robotSettings) {
-        console.log(i);
-        const battery = (0, func_1.checkBattery)(i);
-        var message = {
-            robotName: `${i}`,
-            battery: `${battery}`,
-        };
-        mqttClient.publish('mainserver', JSON.stringify(message));
-    }
-}, 600000);
+// setInterval(() => {
+//     for (var i in robotSettings) {
+//         console.log(i);
+//         const battery = checkBattery(i);
+//         var message = {
+//             robotName: `${i}`,
+//             battery: `${battery}`,
+//         };
+//         mqttClient.publish('mainserver', JSON.stringify(message));
+//     }
+// }, 600000);
 // 현재 좌표 메인서버로 계속 전송
+function manualTurn2() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/speed`, {
+                vx: 0.0,
+                vth: -1.0
+            });
+            if (response.status === 200) {
+                console.log(response.data);
+                // console.log("수동회전");
+            }
+        }
+        catch (error) {
+            console.error('Error with API call:', error);
+        }
+    });
+}
+exports.manualTurn2 = manualTurn2;
+//속도 변경
+function test2() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
+                max_vel: 0.4
+            });
+            if (response.status === 200) {
+                console.log(response.data);
+                console.log("test");
+            }
+        }
+        catch (error) {
+            console.error('Error', error);
+        }
+    });
+}
+exports.test2 = test2;
+test2();
+// setInterval(() =>{
+//     manualTurn2();
+//     manualMove2();
+// },20);
 // setTimeout(() => {
 // for(var i in robotSettings){
 //     console.log(i);

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLaser = exports.manualMove = exports.manualTurn = exports.movePointList = exports.test = exports.getPose = exports.checkBattery = exports.charge = exports.retryMovePoint = exports.moverCoordinates = exports.movePoint = exports.cancle = exports.serverSetup = exports.setupPoints = exports.setupRobots = void 0;
+exports.getLaser = exports.manualMove = exports.manualTurn = exports.movePointList = exports.test = exports.getPose = exports.changeSpeed = exports.checkBattery = exports.charge = exports.retryMovePoint = exports.moverCoordinates = exports.movePoint = exports.cancle = exports.serverSetup = exports.setupPoints = exports.setupRobots = void 0;
 // func.ts
 const axios_1 = __importDefault(require("axios"));
 const fs_1 = __importDefault(require("fs"));
@@ -201,6 +201,25 @@ function checkBattery(robotName) {
     });
 }
 exports.checkBattery = checkBattery;
+//속도 변경
+//기본적인 작동테스트만함, 추가코딩필요
+function changeSpeed() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
+                max_vel: 1
+            });
+            if (response.status === 200) {
+                console.log(response.data);
+                console.log("test");
+            }
+        }
+        catch (error) {
+            console.error('Error', error);
+        }
+    });
+}
+exports.changeSpeed = changeSpeed;
 // type crashType = {}
 let robots = {};
 let crashState = {};
