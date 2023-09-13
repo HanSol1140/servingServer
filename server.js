@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.test2 = exports.manualTurn2 = void 0;
+exports.changesped = exports.getSpeed = exports.getIMUstatus = void 0;
 // server.ts
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
@@ -48,16 +48,13 @@ const func_1 = require("./func");
 //     }
 // }, 600000);
 // 현재 좌표 메인서버로 계속 전송
-function manualTurn2() {
+function getIMUstatus() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/speed`, {
-                vx: 0.0,
-                vth: -1.0
-            });
+            const response = yield axios_1.default.get(`http://192.168.0.177/reeman/imu`);
             if (response.status === 200) {
                 console.log(response.data);
-                // console.log("수동회전");
+                // console.log("!!");
             }
         }
         catch (error) {
@@ -65,9 +62,29 @@ function manualTurn2() {
         }
     });
 }
-exports.manualTurn2 = manualTurn2;
+exports.getIMUstatus = getIMUstatus;
+function getSpeed() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`http://192.168.0.177/reeman/speed`);
+            if (response.status === 200) {
+                console.log(response.data);
+                // console.log("!!");
+            }
+        }
+        catch (error) {
+            console.log("속도측정 에러");
+            // console.error('Error with API call:', error);
+        }
+    });
+}
+exports.getSpeed = getSpeed;
+setInterval(() => {
+    // getSpeed();
+    getIMUstatus();
+}, 100);
 //속도 변경
-function test2() {
+function changesped() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
@@ -83,8 +100,7 @@ function test2() {
         }
     });
 }
-exports.test2 = test2;
-test2();
+exports.changesped = changesped;
 // setInterval(() =>{
 //     manualTurn2();
 //     manualMove2();

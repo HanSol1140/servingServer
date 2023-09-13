@@ -46,15 +46,12 @@ serverSetup();
 // }, 600000);
 
 // 현재 좌표 메인서버로 계속 전송
-export async function manualTurn2() {
+export async function getIMUstatus() {
     try {
-        const response = await axios.post(`http://192.168.0.177/cmd/speed`, {
-            vx: 0.0,
-            vth: -1.0
-        });
+        const response = await axios.get(`http://192.168.0.177/reeman/imu`);
         if (response.status === 200) {
             console.log(response.data);
-            // console.log("수동회전");
+            // console.log("!!");
         }
 
     } catch (error) {
@@ -62,11 +59,29 @@ export async function manualTurn2() {
     }
 }
 
+export async function getSpeed() {
+    try {
+        const response = await axios.get(`http://192.168.0.177/reeman/speed`);
+        if (response.status === 200) {
+            console.log(response.data);
+            // console.log("!!");
+        }
+
+    } catch (error) {
+        console.log("속도측정 에러");
+        // console.error('Error with API call:', error);
+    }
+}
+
+setInterval(() => {
+    // getSpeed();
+    getIMUstatus();
+}, 100);
 //속도 변경
-export async function test2() {
+export async function changesped() {
     try {
         const response = await axios.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
-            max_vel:0.4
+            max_vel: 0.4
         });
         if (response.status === 200) {
             console.log(response.data);
@@ -76,8 +91,7 @@ export async function test2() {
     } catch (error) {
         console.error('Error', error);
     }
-} 
-test2();
+}
 // setInterval(() =>{
 //     manualTurn2();
 //     manualMove2();
