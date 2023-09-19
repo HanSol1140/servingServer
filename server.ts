@@ -16,8 +16,7 @@ const server = app.listen(PORT, () => {
 
 //MQTT
 import { initializeMQTT } from './mqtthandler';
-const mqttClient = initializeMQTT();
-
+const mqttClient = initializeMQTT(); ASAD
 
 // 라우터
 import routerhandler from './routerhandler';
