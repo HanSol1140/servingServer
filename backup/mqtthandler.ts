@@ -2,7 +2,7 @@
 import mqtt from 'mqtt';
 import axios from 'axios';
 import fs from 'fs';
-import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
+import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from '../robotconfig';
 import { cancle, movePoint, moverCoordinates, retryMovePoint, charge, getPose } from './func';
 export function initializeMQTT() {
     const mqttClient = mqtt.connect('mqtt://192.168.0.137:1883');

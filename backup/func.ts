@@ -1,7 +1,7 @@
-// func.ts
+// robotSetup.ts
 import axios from 'axios';
 import fs from 'fs';
-import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
+import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from '../robotconfig';
 
 
 
@@ -78,6 +78,52 @@ export async function serverSetup() {
     // console.log(pointCoordinate["1"].y);
     // console.log(pointCoordinate["1"].theta);
 
+}
+
+//속도 변경
+//기본적인 작동테스트만함, 추가코딩필요
+export async function changeSpeed() {
+    try {
+        const response = await axios.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
+            max_vel:1
+        });
+        if (response.status === 200) {
+            console.log(response.data);
+            console.log("test");
+        }
+
+    } catch (error) {
+        console.error('Error', error);
+    }
+}
+
+// 속도 턴속도 측정이라는데 변하질않음
+export async function getIMUstatus() {
+    try {
+        const response = await axios.get(`http://192.168.0.177/reeman/imu`);
+        if (response.status === 200) {
+            console.log(response.data);
+            // console.log("!!");
+        }
+
+    } catch (error) {
+        console.error('Error with API call:', error);
+    }
+}
+
+// 현재 속도 측정 => 가만히 있을땐 error출력, 움직일때만 작동하는 API
+export async function getSpeed() {
+    try {
+        const response = await axios.get(`http://192.168.0.177/reeman/speed`);
+        if (response.status === 200) {
+            console.log(response.data);
+            // console.log("!!");
+        }
+
+    } catch (error) {
+        console.log("속도측정 에러");
+        // console.error('Error with API call:', error);
+    }
 }
 
 // ────────────────────────────────────────────────────────────────────────────────────────────
@@ -190,22 +236,7 @@ export async function checkBattery(robotName: string) {  // 로봇이름
     }
 }
 
-//속도 변경
-//기본적인 작동테스트만함, 추가코딩필요
-export async function changeSpeed() {
-    try {
-        const response = await axios.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
-            max_vel:1
-        });
-        if (response.status === 200) {
-            console.log(response.data);
-            console.log("test");
-        }
 
-    } catch (error) {
-        console.error('Error', error);
-    }
-} 
 
 // ────────────────────────────────────────────────────────────────────────────────────────────
 

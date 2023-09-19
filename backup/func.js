@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLaser = exports.manualMove = exports.manualTurn = exports.movePointList = exports.test = exports.getPose = exports.changeSpeed = exports.checkBattery = exports.charge = exports.retryMovePoint = exports.moverCoordinates = exports.movePoint = exports.cancle = exports.serverSetup = exports.setupPoints = exports.setupRobots = void 0;
-// func.ts
+exports.getLaser = exports.manualMove = exports.manualTurn = exports.movePointList = exports.test = exports.getPose = exports.checkBattery = exports.charge = exports.retryMovePoint = exports.moverCoordinates = exports.movePoint = exports.cancle = exports.getSpeed = exports.getIMUstatus = exports.changeSpeed = exports.serverSetup = exports.setupPoints = exports.setupRobots = void 0;
+// robotSetup.ts
 const axios_1 = __importDefault(require("axios"));
 const fs_1 = __importDefault(require("fs"));
-const robotconfig_1 = require("./robotconfig");
+const robotconfig_1 = require("../robotconfig");
 // 서버 실행시 로봇리스트 받아오기
 function setupRobots() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -81,6 +81,58 @@ function serverSetup() {
     });
 }
 exports.serverSetup = serverSetup;
+//속도 변경
+//기본적인 작동테스트만함, 추가코딩필요
+function changeSpeed() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
+                max_vel: 1
+            });
+            if (response.status === 200) {
+                console.log(response.data);
+                console.log("test");
+            }
+        }
+        catch (error) {
+            console.error('Error', error);
+        }
+    });
+}
+exports.changeSpeed = changeSpeed;
+// 속도 턴속도 측정이라는데 변하질않음
+function getIMUstatus() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`http://192.168.0.177/reeman/imu`);
+            if (response.status === 200) {
+                console.log(response.data);
+                // console.log("!!");
+            }
+        }
+        catch (error) {
+            console.error('Error with API call:', error);
+        }
+    });
+}
+exports.getIMUstatus = getIMUstatus;
+// 현재 속도 측정 => 가만히 있을땐 error출력, 움직일때만 작동하는 API
+function getSpeed() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`http://192.168.0.177/reeman/speed`);
+            if (response.status === 200) {
+                console.log(response.data);
+                // console.log("!!");
+            }
+        }
+        catch (error) {
+            console.log("속도측정 에러");
+            // console.error('Error with API call:', error);
+        }
+    });
+}
+exports.getSpeed = getSpeed;
 // ────────────────────────────────────────────────────────────────────────────────────────────
 // 서빙봇 이동 API
 // 이동 취소
@@ -201,25 +253,6 @@ function checkBattery(robotName) {
     });
 }
 exports.checkBattery = checkBattery;
-//속도 변경
-//기본적인 작동테스트만함, 추가코딩필요
-function changeSpeed() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
-                max_vel: 1
-            });
-            if (response.status === 200) {
-                console.log(response.data);
-                console.log("test");
-            }
-        }
-        catch (error) {
-            console.error('Error', error);
-        }
-    });
-}
-exports.changeSpeed = changeSpeed;
 // type crashType = {}
 let robots = {};
 let crashState = {};

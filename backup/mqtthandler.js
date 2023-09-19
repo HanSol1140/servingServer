@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeMQTT = void 0;
 // mqtthandler.ts
 const mqtt_1 = __importDefault(require("mqtt"));
-const robotconfig_1 = require("./robotconfig");
+const robotconfig_1 = require("../robotconfig");
 const func_1 = require("./func");
 function initializeMQTT() {
     const mqttClient = mqtt_1.default.connect('mqtt://192.168.0.137:1883');
