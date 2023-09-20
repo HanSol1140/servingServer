@@ -39,7 +39,6 @@ exports.initializeMQTT = void 0;
 // mqtthandler.ts
 const mqtt_1 = __importDefault(require("mqtt"));
 const robotconfig_1 = require("../robotconfig");
-// import { cancle, movePoint, moverCoordinates, retryMovePoint, charge, getPose } from '../Services/robotCommands';
 const Func = __importStar(require("../Services/robotCommands.js"));
 function initializeMQTT() {
     const mqttClient = mqtt_1.default.connect('mqtt://192.168.0.137:1883');

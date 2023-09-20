@@ -7,7 +7,7 @@ app.use(cors()); // 모든 도메인에서의 요청 허용
 import axios from 'axios';
 const PORT = process.env.PORT || 8084;
 
-import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
+import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from '../robotconfig';
 
 // 서버 시작
 const server = app.listen(PORT, () => {

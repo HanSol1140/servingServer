@@ -1,5 +1,4 @@
 "use strict";
-// robotconfig.ts
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setPointCoordinate = exports.pointCoordinate = exports.setRobotSettings = exports.robotSettings = void 0;
 exports.robotSettings = {};
