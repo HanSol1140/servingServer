@@ -143,7 +143,7 @@ export async function changeSpeed() {
             console.log(response.data);
             console.log("test");
         }
-
+ 
     } catch (error) {
         console.error('Error', error);
     }
@@ -179,20 +179,79 @@ export async function getSpeed() {
 }
 
 // 레이저 데이터 수집
+
+type LaserDataType = {
+    x: number,
+    y: number
+};
+
+let laser: {
+    [key: number]: LaserDataType[]
+} = {};
+
+
 export async function getLaser(robotName: string) {
     let ip: string = robotSettings[robotName].robotIP;
     try {
         const response = await axios.get(`http://${ip}/reeman/laser`);
         if (response.status === 200) {
-            console.log(response.data);
+            // response.data
+            const coordinates = response.data.coordinates;
+            
+            const length = coordinates.length;
+            const middle = Math.floor(length / 2);
+            const range = Math.floor(length / 4) / 2;
+
+            const startIndex = middle - range;
+            const endIndex = middle + range;
+            const rawCenterPortion = coordinates.slice(startIndex, endIndex);
+            
+            // centerPortion의 각 항목을 LaserDataType (형태로 변환
+            const centerPortion = rawCenterPortion.map((item:[number, number]) => ({ x: item[0], y: item[1] }));
+
+            const robotNumber = parseInt(robotSettings[robotName].robotNumber);
+
+            laser[robotNumber] = centerPortion;
+
+            return laser;
         }
     } catch (error) {
         console.error('Error with API call:', error);
     }
 }
+
+
+
+
+
+
+// 레이저 데이터 수집을 통해 방향체크
+
+function normalizeAngle(angle:number) { // 각도 보정
+    while (angle <= -180) angle += 360;
+    while (angle > 180) angle -= 360;
+    return angle;
+}
+
+export async function getDivideDirection(robotTheta:number, obsX:number, obsY:number, robotX:number, robotY:number){
+    // 좌표 기준으로 방향을 체크
+    // let checkDirection = Math.atan2((장애물 y좌표 - 로봇의 y현재좌표), (장애물 x좌표 -로봇의 x현재좌표));
+    // checkDirection = aaa * 180 / Math.PI ;
+    // 현재 로봇이 바라보고 있는 방향 기준으로 체크
+    // checkDirection 로봇의 현재 theta - checkDirection = 양수일경우 좌측, 음수일경우 우측에 장애물이 있다
+
+    let checkDirection = Math.atan2(obsY - robotY, obsX - robotX);
+    checkDirection = checkDirection * 180 / Math.PI;
+    let deltaTheta = normalizeAngle(checkDirection - robotTheta);
+
+    // 양수일 경우 좌측, 음수일 경우 우측에 장애물이 있다고 판단
+    return deltaTheta > 0 ? "left" : "right";
+}
+
+
 // ────────────────────────────────────────────────────────────────────────────────────────────
 
-type robotType = {
+type robotType =  {
     [key: number]: {
         x: number,
         y: number,
@@ -207,7 +266,7 @@ type crashType = {
 };
 let crashState: crashType = {};
 
-let currentRobotIndex: number;
+
 
 // 좌표 받기
 export async function getPose(robotName: string) {
@@ -220,13 +279,14 @@ export async function getPose(robotName: string) {
         if (response.status === 200) {
             // console.log(response.data); // theta 는 radian이라서 변환이 필요함
 
-            currentRobotIndex = parseInt(robotSettings[robotName].robotNumber);
+            const currentRobotIndex = parseInt(robotSettings[robotName].robotNumber);
 
             robots[currentRobotIndex] = {
                 x: response.data.x,
                 y: response.data.y,
                 theta: response.data.theta * (180 / Math.PI)
             }
+            return robots;
         }
     } catch (error) {
         console.error('Error with API call:', error);
@@ -234,6 +294,7 @@ export async function getPose(robotName: string) {
 }
 
 // 받은 좌표를 이용하여 수동으로 접근한 로봇을 피함
+let currentRobotIndex : number;
 export function test(robotName: string) {
     getPose(robotName); // 좌표 받기
     const tolerance = 2.5;

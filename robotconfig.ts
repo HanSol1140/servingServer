@@ -1,4 +1,7 @@
 // robotconfig.ts
+
+
+// robotSettings
 export interface PointCoordinate {
     x?: string;
     y?: string;

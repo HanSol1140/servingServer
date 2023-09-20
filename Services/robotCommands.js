@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.manualMove = exports.manualTurn = exports.movePointList = exports.test = exports.getPose = exports.getLaser = exports.getSpeed = exports.getIMUstatus = exports.changeSpeed = exports.checkBattery = exports.charge = exports.movePlan = exports.retryMovePoint = exports.moveCoordinates = exports.movePoint = exports.cancle = void 0;
+exports.manualMove = exports.manualTurn = exports.movePointList = exports.test = exports.getPose = exports.getDivideDirection = exports.getLaser = exports.getSpeed = exports.getIMUstatus = exports.changeSpeed = exports.checkBattery = exports.charge = exports.movePlan = exports.retryMovePoint = exports.moveCoordinates = exports.movePoint = exports.cancle = void 0;
 // func.ts
 const axios_1 = __importDefault(require("axios"));
 const robotconfig_1 = require("../robotconfig");
@@ -205,14 +205,26 @@ function getSpeed() {
     });
 }
 exports.getSpeed = getSpeed;
-// 레이저 데이터 수집
+let laser = {};
 function getLaser(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
         let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
             const response = yield axios_1.default.get(`http://${ip}/reeman/laser`);
             if (response.status === 200) {
-                console.log(response.data);
+                // response.data
+                const coordinates = response.data.coordinates;
+                const length = coordinates.length;
+                const middle = Math.floor(length / 2);
+                const range = Math.floor(length / 4) / 2;
+                const startIndex = middle - range;
+                const endIndex = middle + range;
+                const rawCenterPortion = coordinates.slice(startIndex, endIndex);
+                // centerPortion의 각 항목을 LaserDataType (형태로 변환
+                const centerPortion = rawCenterPortion.map((item) => ({ x: item[0], y: item[1] }));
+                const robotNumber = parseInt(robotconfig_1.robotSettings[robotName].robotNumber);
+                laser[robotNumber] = centerPortion;
+                return laser;
             }
         }
         catch (error) {
@@ -221,10 +233,32 @@ function getLaser(robotName) {
     });
 }
 exports.getLaser = getLaser;
+// 레이저 데이터 수집을 통해 방향체크
+function normalizeAngle(angle) {
+    while (angle <= -180)
+        angle += 360;
+    while (angle > 180)
+        angle -= 360;
+    return angle;
+}
+function getDivideDirection(robotTheta, obsX, obsY, robotX, robotY) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // 좌표 기준으로 방향을 체크
+        // let checkDirection = Math.atan2((장애물 y좌표 - 로봇의 y현재좌표), (장애물 x좌표 -로봇의 x현재좌표));
+        // checkDirection = aaa * 180 / Math.PI ;
+        // 현재 로봇이 바라보고 있는 방향 기준으로 체크
+        // checkDirection 로봇의 현재 theta - checkDirection = 양수일경우 좌측, 음수일경우 우측에 장애물이 있다
+        let checkDirection = Math.atan2(obsY - robotY, obsX - robotX);
+        checkDirection = checkDirection * 180 / Math.PI;
+        let deltaTheta = normalizeAngle(checkDirection - robotTheta);
+        // 양수일 경우 좌측, 음수일 경우 우측에 장애물이 있다고 판단
+        return deltaTheta > 0 ? "left" : "right";
+    });
+}
+exports.getDivideDirection = getDivideDirection;
 // type crashType = {}
 let robots = {};
 let crashState = {};
-let currentRobotIndex;
 // 좌표 받기
 function getPose(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -236,12 +270,13 @@ function getPose(robotName) {
             const response = yield axios_1.default.get(`http://${ip}/reeman/pose`);
             if (response.status === 200) {
                 // console.log(response.data); // theta 는 radian이라서 변환이 필요함
-                currentRobotIndex = parseInt(robotconfig_1.robotSettings[robotName].robotNumber);
+                const currentRobotIndex = parseInt(robotconfig_1.robotSettings[robotName].robotNumber);
                 robots[currentRobotIndex] = {
                     x: response.data.x,
                     y: response.data.y,
                     theta: response.data.theta * (180 / Math.PI)
                 };
+                return robots;
             }
         }
         catch (error) {
@@ -251,6 +286,7 @@ function getPose(robotName) {
 }
 exports.getPose = getPose;
 // 받은 좌표를 이용하여 수동으로 접근한 로봇을 피함
+let currentRobotIndex;
 function test(robotName) {
     getPose(robotName); // 좌표 받기
     const tolerance = 2.5;

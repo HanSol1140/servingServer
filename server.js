@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -46,18 +55,23 @@ const robotrouters_js_1 = __importDefault(require("./Routers/robotrouters.js"));
 const pointrouters_1 = __importDefault(require("./Routers/pointrouters"));
 app.use('/', robotrouters_js_1.default);
 app.use('/', pointrouters_1.default);
-// import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
+const robotconfig_1 = require("./robotconfig");
 const RobotSetup = __importStar(require("./Services/robotSetup.js"));
-// import * as Func from './Services/robotCommands.js';
+const Func = __importStar(require("./Services/robotCommands.js"));
 // 로봇명 전역변수 설정
 // serverSetup();
 RobotSetup.serverSetup();
 // 현재 좌표 메인서버로 계속 전송
-// setInterval(() =>{
-//     // console.log(i);
-//     for(var i in robotSettings){
-//         Func.movePlan(i);
-//     }
+setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log(i);
+    for (var i in robotconfig_1.robotSettings) {
+        var robots = yield Func.getPose(i);
+        var laser = yield Func.getLaser(i);
+    }
+    console.log(robots[1]);
+    console.log(laser[1]);
+    console.log("==========================");
+}), 1000);
 // },100);
 // for(var i in robotSettings){
 // Func.moveCoordinates("192.168.0.177", "1.92", "7.31", "88");
