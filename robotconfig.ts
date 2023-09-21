@@ -8,14 +8,14 @@ type PointCoordinateType = {
 }
 export let robotSettings: {
     [key: string]: {
-        robotNumber:string,
+        robotNumber:number,
         robotIP:string,
         robotRunningState:boolean,
         robotLastOrderPoint:PointCoordinateType
     }
 } = {};
 
-export function setRobotSettings(name: string, robotNumber:string, robotIP:string, robotRunningState:boolean, robotLastOrderPoint:PointCoordinateType) {
+export function setRobotSettings(name: string, robotNumber:number, robotIP:string, robotRunningState:boolean, robotLastOrderPoint:PointCoordinateType) {
     robotSettings[name] = { robotNumber, robotIP, robotRunningState, robotLastOrderPoint };
 }
 
@@ -48,7 +48,7 @@ export function setRobotCoordinate(robotNumber: number, x: number, y: number, th
 
 // laserCoordinate
 export let laserCoordinate: {
-    [key: number]: {};
+    [key: number]: { x: number, y: number }[];
 } = {};
 
 export function setLaserCoordinate(robotNumber: number , centerPortion:[]) {

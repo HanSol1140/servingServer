@@ -190,7 +190,7 @@ export async function getLaser(robotName: string) {
             
             const length = coordinates.length;
             const middle = Math.floor(length / 2);
-            const range = Math.floor(length / 4) / 2;
+            const range = Math.floor(length / 3) / 2;
 
             const startIndex = middle - range;
             const endIndex = middle + range;
@@ -198,9 +198,7 @@ export async function getLaser(robotName: string) {
             
             // centerPortion의 각 항목을 LaserDataType (형태로 변환
             const centerPortion = rawCenterPortion.map((item:[number, number]) => ({ x: item[0], y: item[1] }));
-
-            const robotNumber = parseInt(robotSettings[robotName].robotNumber);
-
+            const robotNumber = robotSettings[robotName].robotNumber;
             setLaserCoordinate(robotNumber, centerPortion);
         }
     } catch (error) {
@@ -259,7 +257,7 @@ export async function getPose(robotName: string) {
         if (response.status === 200) {
             // console.log(response.data); // theta 는 radian이라서 변환이 필요함
 
-            const currentRobotIndex = parseInt(robotSettings[robotName].robotNumber);
+            const currentRobotIndex = (robotSettings[robotName].robotNumber);
             setRobotCoordinate(currentRobotIndex, response.data.x, response.data.y, response.data.theta);
         }
     } catch (error) {

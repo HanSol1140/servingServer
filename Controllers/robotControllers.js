@@ -29,7 +29,7 @@ const RobotModel = __importStar(require("../Models/robotModels.js"));
 const createRobot = (req, res) => {
     try {
         const robotName = req.body.robotName;
-        const robotNumber = req.body.robotNumber;
+        const robotNumber = parseInt(req.body.robotNumber);
         const robotIP = req.body.robotIP;
         const result = RobotModel.createRobotData(robotName, robotNumber, robotIP);
         res.send(result);
@@ -45,7 +45,7 @@ const updateRobot = (req, res) => {
     try {
         const robotName = req.body.robotName;
         const newRobotName = req.body.newRobotName;
-        const newRobotNumber = req.body.newRobotNumber;
+        const newRobotNumber = parseInt(req.body.newRobotNumber);
         const newRobotIP = req.body.newRobotIP;
         const result = RobotModel.updateRobotData(robotName, newRobotName, newRobotNumber, newRobotIP);
         res.send(result);

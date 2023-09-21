@@ -1,3 +1,4 @@
+// robotControllers.ts
 import { Request, Response } from 'express';
 import * as RobotModel from '../Models/robotModels.js';
 
@@ -5,7 +6,7 @@ import * as RobotModel from '../Models/robotModels.js';
 export const createRobot = (req:Request, res:Response) => {
     try {
         const robotName = req.body.robotName;
-        const robotNumber = req.body.robotNumber;
+        const robotNumber = parseInt(req.body.robotNumber);
         const robotIP =req.body.robotIP;
         const result = RobotModel.createRobotData(robotName, robotNumber, robotIP);
         res.send(result);
@@ -20,7 +21,7 @@ export const updateRobot = (req:Request, res:Response) => {
     try {
         const robotName = req.body.robotName;
         const newRobotName = req.body.newRobotName;
-        const newRobotNumber =req.body.newRobotNumber;
+        const newRobotNumber = parseInt(req.body.newRobotNumber);
         const newRobotIP =req.body.newRobotIP;
         const result = RobotModel.updateRobotData(robotName, newRobotName, newRobotNumber, newRobotIP);
         res.send(result);

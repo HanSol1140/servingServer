@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRobotListData = exports.deleteRobotData = exports.updateRobotData = exports.createRobotData = void 0;
+// robotModels.ts
 const fs_1 = __importDefault(require("fs"));
 const filePath = 'Settings/RobotSettings.json';
 const createRobotData = (robotName, robotNumber, robotIP) => {

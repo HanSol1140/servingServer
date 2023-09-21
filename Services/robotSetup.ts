@@ -48,7 +48,7 @@ export async function setupPoints() {
 
 interface robotsInfo {
     robotName: string;
-    robotNumber: string;
+    robotNumber: number;
     robotIP: string;
     robotRunningState: boolean,
     robotLastOrderPoint: object

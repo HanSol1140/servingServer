@@ -1,15 +1,16 @@
+// robotModels.ts
 import fs from 'fs';
 const filePath = 'Settings/RobotSettings.json';
 
 interface RobotData {
     robotName: string;
-    robotNumber: string;
+    robotNumber: number;
     robotIP: string;
     robotRunningState: boolean;
     robotLastOrderPoint: string;
 }
 
-export const createRobotData = (robotName:string, robotNumber:string, robotIP:string): string => {
+export const createRobotData = (robotName:string, robotNumber:number, robotIP:string): string => {
     try {
         // RobotSettings.json이 없다면 생성
         if (!fs.existsSync(filePath)) {
@@ -19,7 +20,6 @@ export const createRobotData = (robotName:string, robotNumber:string, robotIP:st
         // 파일 읽기
         const fileData = fs.readFileSync(filePath, 'utf8');
         let data: RobotData[] = fileData ? JSON.parse(fileData) : [];
-        
         const newData: RobotData = {
             robotName,
             robotNumber,
@@ -49,7 +49,7 @@ export const createRobotData = (robotName:string, robotNumber:string, robotIP:st
     }
 }
 
-export const updateRobotData = (robotName:string, newRobotName:string, newRobotNumber:string, newRobotIP:string): string => {
+export const updateRobotData = (robotName:string, newRobotName:string, newRobotNumber:number, newRobotIP:string): string => {
     try {
         if (!fs.existsSync(filePath)) {
             fs.writeFileSync(filePath, JSON.stringify([]));
