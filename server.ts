@@ -23,7 +23,16 @@ import pointRouters from './Routers/pointrouters';
 app.use('/', robotRouters);
 app.use('/', pointRouters);
 
-import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from './robotconfig';
+import {
+    robotSettings,
+    setRobotSettings,
+    pointCoordinate,
+    setPointCoordinate,
+    robotCoordinate,
+    setRobotCoordinate,
+    laserCoordinate,
+    setLaserCoordinate
+} from './robotconfig';
 
 import * as RobotSetup from './Services/robotSetup.js';
 import * as Func from './Services/robotCommands.js';
@@ -32,19 +41,18 @@ import * as Func from './Services/robotCommands.js';
 // serverSetup();
 RobotSetup.serverSetup();
 
-
-// 현재 좌표 메인서버로 계속 전송
-
+// 각 로봇의 좌표 계속 전송
+// 각 로봇 레이저 좌표 계속 전송
 setInterval(async () =>{
     // console.log(i);
     for(var i in robotSettings){
-        var robots = await Func.getPose(i);
-        var laser = await Func.getLaser(i);
+        await Func.getPose(i);
+        await Func.getLaser(i);
     }
-    console.log(robots[1]);
-    console.log(laser[1]);
-    console.log("==========================");
-},1000);
+    // console.log(laserCoordinate[1]);
+    // console.log(robotCoordinate[1]);
+    // console.log("==========================");
+},33);
     
     
 // },100);

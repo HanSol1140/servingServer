@@ -1,7 +1,18 @@
 // func.ts
 import axios from 'axios';
 import fs from 'fs';
-import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from '../robotconfig';
+import {
+    robotSettings,
+    setRobotSettings,
+    pointCoordinate,
+    setPointCoordinate,
+    robotCoordinate,
+    setRobotCoordinate,
+    laserCoordinate,
+    setLaserCoordinate
+} from '../robotconfig';
+
+
 
 // 서버 실행시 로봇리스트 받아오기
 export async function setupRobots() {
@@ -57,11 +68,6 @@ export async function serverSetup() {
     robots.forEach(robot => {
         setRobotSettings(robot.robotName, robot.robotNumber, robot.robotIP, robot.robotRunningState, robot.robotLastOrderPoint);
     });
-    // console.log(robotSettings["robot1"].robotIP);
-    // console.log(robotSettings["robot2"].robotIP);
-    // console.log(robotSettings["robot3"]);
-    // console.log(robotSettings["robot4"]);
-
 
     // 포인트 좌표 설정
     const points: pointsInfo[] = await setupPoints();
@@ -70,10 +76,5 @@ export async function serverSetup() {
     points.forEach(point => {
         setPointCoordinate(point.pointName, point.coordinatesX, point.coordinatesY, point.coordinatesTheta);
     });
-
-    // console.log(pointCoordinate["1"]);
-    // console.log(pointCoordinate["1"].x);
-    // console.log(pointCoordinate["1"].y);
-    // console.log(pointCoordinate["1"].theta);
 
 }

@@ -21,9 +21,8 @@ const robotconfig_1 = require("../robotconfig");
 // 이동 취소
 function cancle(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
-            const response = yield axios_1.default.post(`http://${ip}/cmd/cancel_goal`);
+            const response = yield axios_1.default.post(`http://${robotconfig_1.robotSettings[robotName].robotIP}/cmd/cancel_goal`);
             if ((yield response.status) === 200) {
                 // console.log(response.data);
                 console.log("Cancle");
@@ -38,9 +37,8 @@ exports.cancle = cancle;
 // 포인트명으로 이동
 function movePoint(robotName, point) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
-            const response = yield axios_1.default.post(`http://${ip.trim()}/cmd/nav_point`, {
+            const response = yield axios_1.default.post(`http://${robotconfig_1.robotSettings[robotName].robotIP}/cmd/nav_point`, {
                 point: `${point}`
             });
             if (response.status === 200) {
@@ -66,12 +64,11 @@ exports.movePoint = movePoint;
 // 좌표로 이동
 function moveCoordinates(robotName, xstring, ystring, thetastring) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         var x = Number(xstring);
         var y = Number(ystring);
         var theta = Number(thetastring);
         try {
-            const response = yield axios_1.default.post(`http://${ip.trim()}/cmd/nav`, {
+            const response = yield axios_1.default.post(`http://${robotconfig_1.robotSettings[robotName].robotIP}/cmd/nav`, {
                 x,
                 y,
                 theta
@@ -102,9 +99,8 @@ function retryMovePoint(robotName) {
 exports.retryMovePoint = retryMovePoint;
 function movePlan(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
-            const response = yield axios_1.default.get(`http://${ip.trim()}/reeman/global_plan`);
+            const response = yield axios_1.default.get(`http://${robotconfig_1.robotSettings[robotName].robotIP}/reeman/global_plan`);
             if (response.status === 200) {
                 var valuelist = Object.values(response.data);
                 console.log(response.data.coordinates[response.data.coordinates.length - 1]);
@@ -119,9 +115,8 @@ function movePlan(robotName) {
 exports.movePlan = movePlan;
 function charge(robotName, point) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
-            const response = yield axios_1.default.post(`http://${ip.trim()}/cmd/charge`, {
+            const response = yield axios_1.default.post(`http://${robotconfig_1.robotSettings[robotName].robotIP}/cmd/charge`, {
                 type: 1,
                 point: `${point}`
             });
@@ -138,9 +133,8 @@ exports.charge = charge;
 // 배터리 체크, 이게 일정 이하가 된다면 charge실행
 function checkBattery(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
-            const response = yield axios_1.default.get(`http://${ip.trim()}/reeman/base_encode`);
+            const response = yield axios_1.default.get(`http://${robotconfig_1.robotSettings[robotName].robotIP}/reeman/base_encode`);
             if ((yield response.status) === 200) {
                 console.log(response.data);
                 // console.log(response.data.battery);
@@ -205,12 +199,11 @@ function getSpeed() {
     });
 }
 exports.getSpeed = getSpeed;
-let laser = {};
+// 레이저 데이터 수집
 function getLaser(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
         try {
-            const response = yield axios_1.default.get(`http://${ip}/reeman/laser`);
+            const response = yield axios_1.default.get(`http://${robotconfig_1.robotSettings[robotName].robotIP}/reeman/laser`);
             if (response.status === 200) {
                 // response.data
                 const coordinates = response.data.coordinates;
@@ -223,8 +216,7 @@ function getLaser(robotName) {
                 // centerPortion의 각 항목을 LaserDataType (형태로 변환
                 const centerPortion = rawCenterPortion.map((item) => ({ x: item[0], y: item[1] }));
                 const robotNumber = parseInt(robotconfig_1.robotSettings[robotName].robotNumber);
-                laser[robotNumber] = centerPortion;
-                return laser;
+                (0, robotconfig_1.setLaserCoordinate)(robotNumber, centerPortion);
             }
         }
         catch (error) {
@@ -257,26 +249,16 @@ function getDivideDirection(robotTheta, obsX, obsY, robotX, robotY) {
 }
 exports.getDivideDirection = getDivideDirection;
 // type crashType = {}
-let robots = {};
-let crashState = {};
 // 좌표 받기
 function getPose(robotName) {
     return __awaiter(this, void 0, void 0, function* () {
-        let ip = robotconfig_1.robotSettings[robotName].robotIP;
-        // 값이 없으면 false로 변환, 있다면 true로 유지
-        crashState[robotName] = crashState[robotName];
         try {
             // 좌표 받기
-            const response = yield axios_1.default.get(`http://${ip}/reeman/pose`);
+            const response = yield axios_1.default.get(`http://${robotconfig_1.robotSettings[robotName].robotIP}/reeman/pose`);
             if (response.status === 200) {
                 // console.log(response.data); // theta 는 radian이라서 변환이 필요함
                 const currentRobotIndex = parseInt(robotconfig_1.robotSettings[robotName].robotNumber);
-                robots[currentRobotIndex] = {
-                    x: response.data.x,
-                    y: response.data.y,
-                    theta: response.data.theta * (180 / Math.PI)
-                };
-                return robots;
+                (0, robotconfig_1.setRobotCoordinate)(currentRobotIndex, response.data.x, response.data.y, response.data.theta);
             }
         }
         catch (error) {
@@ -285,6 +267,8 @@ function getPose(robotName) {
     });
 }
 exports.getPose = getPose;
+let robots = {};
+let crashState = {};
 // 받은 좌표를 이용하여 수동으로 접근한 로봇을 피함
 let currentRobotIndex;
 function test(robotName) {

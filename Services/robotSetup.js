@@ -62,20 +62,12 @@ function serverSetup() {
         robots.forEach(robot => {
             (0, robotconfig_1.setRobotSettings)(robot.robotName, robot.robotNumber, robot.robotIP, robot.robotRunningState, robot.robotLastOrderPoint);
         });
-        // console.log(robotSettings["robot1"].robotIP);
-        // console.log(robotSettings["robot2"].robotIP);
-        // console.log(robotSettings["robot3"]);
-        // console.log(robotSettings["robot4"]);
         // 포인트 좌표 설정
         const points = yield setupPoints();
         // console.log(points);
         points.forEach(point => {
             (0, robotconfig_1.setPointCoordinate)(point.pointName, point.coordinatesX, point.coordinatesY, point.coordinatesTheta);
         });
-        // console.log(pointCoordinate["1"]);
-        // console.log(pointCoordinate["1"].x);
-        // console.log(pointCoordinate["1"].y);
-        // console.log(pointCoordinate["1"].theta);
     });
 }
 exports.serverSetup = serverSetup;

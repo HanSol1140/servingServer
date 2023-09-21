@@ -61,17 +61,18 @@ const Func = __importStar(require("./Services/robotCommands.js"));
 // 로봇명 전역변수 설정
 // serverSetup();
 RobotSetup.serverSetup();
-// 현재 좌표 메인서버로 계속 전송
+// 각 로봇의 좌표 계속 전송
+// 각 로봇 레이저 좌표 계속 전송
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     // console.log(i);
     for (var i in robotconfig_1.robotSettings) {
-        var robots = yield Func.getPose(i);
-        var laser = yield Func.getLaser(i);
+        yield Func.getPose(i);
+        yield Func.getLaser(i);
     }
-    console.log(robots[1]);
-    console.log(laser[1]);
-    console.log("==========================");
-}), 1000);
+    // console.log(laserCoordinate[1]);
+    // console.log(robotCoordinate[1]);
+    // console.log("==========================");
+}), 33);
 // },100);
 // for(var i in robotSettings){
 // Func.moveCoordinates("192.168.0.177", "1.92", "7.31", "88");

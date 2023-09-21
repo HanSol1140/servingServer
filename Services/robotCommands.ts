@@ -1,8 +1,16 @@
 // func.ts
 import axios from 'axios';
 import fs from 'fs';
-import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from '../robotconfig';
-
+import {
+    robotSettings,
+    setRobotSettings,
+    pointCoordinate,
+    setPointCoordinate,
+    robotCoordinate,
+    setRobotCoordinate,
+    laserCoordinate,
+    setLaserCoordinate
+} from '../robotconfig';
 
 
 
@@ -11,9 +19,8 @@ import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } 
 // 서빙봇 이동 API
 // 이동 취소
 export async function cancle(robotName: string) {
-    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.post(`http://${ip}/cmd/cancel_goal`);
+        const response = await axios.post(`http://${robotSettings[robotName].robotIP}/cmd/cancel_goal`);
         if (await response.status === 200) {
             // console.log(response.data);
             console.log("Cancle");
@@ -26,9 +33,8 @@ export async function cancle(robotName: string) {
 
 // 포인트명으로 이동
 export async function movePoint(robotName: string, point: string) {
-    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.post(`http://${ip.trim()}/cmd/nav_point`, {
+        const response = await axios.post(`http://${robotSettings[robotName].robotIP}/cmd/nav_point`, {
             point: `${point}`
         });
         if (response.status === 200) {
@@ -51,12 +57,11 @@ export async function movePoint(robotName: string, point: string) {
 
 // 좌표로 이동
 export async function moveCoordinates(robotName: string, xstring?: string, ystring?: string, thetastring?: string) {
-    let ip: string = robotSettings[robotName].robotIP;
     var x: number = Number(xstring);
     var y: number = Number(ystring);
     var theta: number = Number(thetastring);
     try {
-        const response = await axios.post(`http://${ip.trim()}/cmd/nav`, {
+        const response = await axios.post(`http://${robotSettings[robotName].robotIP}/cmd/nav`, {
             x,
             y,
             theta
@@ -83,9 +88,8 @@ export async function retryMovePoint(robotName: string) {
 }
 
 export async function movePlan(robotName: string) {
-    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.get(`http://${ip.trim()}/reeman/global_plan`);
+        const response = await axios.get(`http://${robotSettings[robotName].robotIP}/reeman/global_plan`);
         if (response.status === 200) {
 
             var valuelist = Object.values(response.data);
@@ -100,9 +104,8 @@ export async function movePlan(robotName: string) {
 }
 
 export async function charge(robotName: string, point: string) {
-    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.post(`http://${ip.trim()}/cmd/charge`, {
+        const response = await axios.post(`http://${robotSettings[robotName].robotIP}/cmd/charge`, {
             type: 1, // 지정된 위치로 이동 후 가까운 충전 포인트를 찾아서 접속함
             point: `${point}`
         });
@@ -118,9 +121,8 @@ export async function charge(robotName: string, point: string) {
 
 // 배터리 체크, 이게 일정 이하가 된다면 charge실행
 export async function checkBattery(robotName: string) {  // 로봇이름
-    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.get(`http://${ip.trim()}/reeman/base_encode`,);
+        const response = await axios.get(`http://${robotSettings[robotName].robotIP}/reeman/base_encode`,);
         if (await response.status === 200) {
             console.log(response.data);
             // console.log(response.data.battery);
@@ -179,21 +181,9 @@ export async function getSpeed() {
 }
 
 // 레이저 데이터 수집
-
-type LaserDataType = {
-    x: number,
-    y: number
-};
-
-let laser: {
-    [key: number]: LaserDataType[]
-} = {};
-
-
 export async function getLaser(robotName: string) {
-    let ip: string = robotSettings[robotName].robotIP;
     try {
-        const response = await axios.get(`http://${ip}/reeman/laser`);
+        const response = await axios.get(`http://${robotSettings[robotName].robotIP}/reeman/laser`);
         if (response.status === 200) {
             // response.data
             const coordinates = response.data.coordinates;
@@ -211,9 +201,7 @@ export async function getLaser(robotName: string) {
 
             const robotNumber = parseInt(robotSettings[robotName].robotNumber);
 
-            laser[robotNumber] = centerPortion;
-
-            return laser;
+            setLaserCoordinate(robotNumber, centerPortion);
         }
     } catch (error) {
         console.error('Error with API call:', error);
@@ -259,40 +247,33 @@ type robotType =  {
     }
 };
 // type crashType = {}
-let robots: robotType = {};
 
-type crashType = {
-    [key: string]: boolean;
-};
-let crashState: crashType = {};
 
 
 
 // 좌표 받기
 export async function getPose(robotName: string) {
-    let ip: string = robotSettings[robotName].robotIP;
-    // 값이 없으면 false로 변환, 있다면 true로 유지
-    crashState[robotName] = crashState[robotName];
     try {
         // 좌표 받기
-        const response = await axios.get(`http://${ip}/reeman/pose`);
+        const response = await axios.get(`http://${robotSettings[robotName].robotIP}/reeman/pose`);
         if (response.status === 200) {
             // console.log(response.data); // theta 는 radian이라서 변환이 필요함
 
             const currentRobotIndex = parseInt(robotSettings[robotName].robotNumber);
-
-            robots[currentRobotIndex] = {
-                x: response.data.x,
-                y: response.data.y,
-                theta: response.data.theta * (180 / Math.PI)
-            }
-            return robots;
+            setRobotCoordinate(currentRobotIndex, response.data.x, response.data.y, response.data.theta);
         }
     } catch (error) {
         console.error('Error with API call:', error);
     }
 }
 
+
+let robots: robotType = {};
+
+type crashType = {
+    [key: string]: boolean;
+};
+let crashState: crashType = {};
 // 받은 좌표를 이용하여 수동으로 접근한 로봇을 피함
 let currentRobotIndex : number;
 export function test(robotName: string) {
