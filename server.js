@@ -35,12 +35,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.setSpeed = void 0;
 // server.ts
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const cors = require('cors');
 app.use(cors()); // 모든 도메인에서의 요청 허용
+const axios_1 = __importDefault(require("axios"));
 const PORT = process.env.PORT || 8084;
 // 서버 시작
 const server = app.listen(PORT, () => {
@@ -63,32 +65,50 @@ const Func = __importStar(require("./Services/robotCommands.js"));
 RobotSetup.serverSetup();
 // 각 로봇의 좌표 계속 전송
 // 각 로봇 레이저 좌표 계속 전송
-setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-    for (var i in robotconfig_1.robotSettings) {
-        yield Func.getPose(i);
-        yield Func.getLaser(i);
-        // console.log(robotSettings[i].robotIP);
-        // console.log(robotCoordinate[robotSettings[i].robotNumber]);
-        // 레이저 감지 좌표 순회
-        for (const coordinate of robotconfig_1.laserCoordinate[robotconfig_1.robotSettings[i].robotNumber]) {
-            const robotTheta = robotconfig_1.robotCoordinate[robotconfig_1.robotSettings[i].robotNumber].theta * (180 / Math.PI);
-            const robotX = robotconfig_1.robotCoordinate[robotconfig_1.robotSettings[i].robotNumber].x;
-            const robotY = robotconfig_1.robotCoordinate[robotconfig_1.robotSettings[i].robotNumber].y;
-            const dx = robotX - coordinate.x;
-            const dy = robotY - coordinate.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            // 장애물과 로봇이 일정거리 이내
-            // 레이저 좌표에서 벽을 제외한 통로의 값만 장애물로 감지
-            if (distance < 2.5 && coordinate.x > 0.3 && coordinate.x < 3.40 && coordinate.y > -1 && coordinate.y < 8.4) {
-                console.log(i + "가 인식한 장애물의 좌표" + coordinate.x + " / " + coordinate.y);
-                var direction = yield Func.getDivideDirection(robotTheta, coordinate.x, coordinate.y, robotX, robotY);
-                console.log(direction); // 로봇의 기준으로 장애물이 left / right인지 확인
-                break;
+function setSpeed() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // 좌표 받기
+            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/max_speed`, {
+                speed: 0.5
+            });
+            if (response.status === 200) {
+                // console.log(response.data); // theta 는 radian이라서 변환이 필요함
             }
         }
+        catch (error) {
+            console.error('Error with API call:', error);
+        }
+    });
+}
+exports.setSpeed = setSpeed;
+setSpeed();
+setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+    for (var i in robotconfig_1.robotSettings) {
+        Func.getPose(i);
+        Func.getLaser(i);
+        console.log(robotconfig_1.robotSettings[i].robotIP);
+        // console.log(robotCoordinate[robotSettings[i].robotNumber]);
+        // 레이저 감지 좌표 순회
+        // for(const coordinate of laserCoordinate[robotSettings[i].robotNumber]){
+        //     const robotTheta = robotCoordinate[robotSettings[i].robotNumber].theta * (180 / Math.PI);
+        //     const robotX = robotCoordinate[robotSettings[i].robotNumber].x;
+        //     const robotY = robotCoordinate[robotSettings[i].robotNumber].y;
+        //     const dx = robotX - coordinate.x;
+        //     const dy = robotY - coordinate.y;
+        //     const distance = Math.sqrt(dx * dx + dy * dy);
+        //     // 장애물과 로봇이 일정거리 이내
+        //     // 레이저 좌표에서 벽을 제외한 통로의 값만 장애물로 감지
+        //     if(distance < 2.5 && coordinate.x > 0.3 && coordinate.x < 3.40 && coordinate.y > -1 && coordinate.y < 8.4) {
+        //         console.log(i + "가 인식한 장애물의 좌표" + coordinate.x + " / "+ coordinate.y);
+        //         var direction = await Func.getDivideDirection(robotTheta, coordinate.x, coordinate.y, robotX, robotY);
+        //         console.log(direction); // 로봇의 기준으로 장애물이 left / right인지 확인
+        //         break;
+        //     }     
+        // }
     }
-    const currentDate = new Date();
-    console.log(currentDate);
+    // const currentDate = new Date();
+    // console.log(currentDate);
 }), 33);
 // },100);
 // for(var i in robotSettings){
