@@ -103,7 +103,7 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
             // 장애물과 로봇이 일정거리 이내
             // 레이저 좌표에서 벽을 제외한 통로의 값만 장애물로 감지
             if (distance < 2.5 && coordinate.x > 0.3 && coordinate.x < 3.40 && coordinate.y > -1 && coordinate.y < 8.4) {
-                console.log(i + "가 인식한 장애물의 좌표" + coordinate.x + " / " + coordinate.y);
+                // console.log(i + "가 인식한 장애물의 좌표" + coordinate.x + " / "+ coordinate.y);
                 var direction = yield Func.getDivideDirection(robotTheta, coordinate.x, coordinate.y, robotX, robotY);
                 console.log(direction); // 로봇의 기준으로 장애물이 left / right인지 확인
                 break;
