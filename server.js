@@ -91,7 +91,7 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         console.log(robotconfig_1.robotSettings[i].robotIP);
         // console.log(robotCoordinate[robotSettings[i].robotNumber]);
     }
-    // 장애물 감지
+    // 장애물 감지 
     for (var i in robotconfig_1.robotSettings) {
         for (const coordinate of robotconfig_1.laserCoordinate[robotconfig_1.robotSettings[i].robotNumber]) {
             const robotTheta = robotconfig_1.robotCoordinate[robotconfig_1.robotSettings[i].robotNumber].theta * (180 / Math.PI);

@@ -68,7 +68,7 @@ setInterval(async () => {
         // console.log(robotCoordinate[robotSettings[i].robotNumber]);
     }
 
-    // 장애물 감지
+    // 장애물 감지 
     for(var i in robotSettings){
         for(const coordinate of laserCoordinate[robotSettings[i].robotNumber]){
             const robotTheta = robotCoordinate[robotSettings[i].robotNumber].theta * (180 / Math.PI);
