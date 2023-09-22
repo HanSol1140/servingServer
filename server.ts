@@ -59,7 +59,7 @@ export async function setSpeed() {
 }
 setSpeed();
 
-setInterval(async () => {
+setInterval(() => {
     for(var i in robotSettings){
         Func.getPose(i);
         Func.getLaser(i);

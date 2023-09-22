@@ -83,7 +83,7 @@ function setSpeed() {
 }
 exports.setSpeed = setSpeed;
 setSpeed();
-setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+setInterval(() => {
     for (var i in robotconfig_1.robotSettings) {
         Func.getPose(i);
         Func.getLaser(i);
@@ -109,7 +109,7 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     }
     // const currentDate = new Date();
     // console.log(currentDate);
-}), 33);
+}, 33);
 // },100);
 // for(var i in robotSettings){
 // Func.moveCoordinates("192.168.0.177", "1.92", "7.31", "88");
