@@ -62,13 +62,13 @@ function movePoint(robotName, point) {
 }
 exports.movePoint = movePoint;
 // 좌표로 이동
-function moveCoordinates(robotName, xstring, ystring, thetastring) {
+function moveCoordinates(xstring, ystring, thetastring) {
     return __awaiter(this, void 0, void 0, function* () {
         var x = Number(xstring);
         var y = Number(ystring);
         var theta = Number(thetastring);
         try {
-            const response = yield axios_1.default.post(`http://${robotconfig_1.robotSettings[robotName].robotIP}/cmd/nav`, {
+            const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav`, {
                 x,
                 y,
                 theta
@@ -117,7 +117,7 @@ function charge(robotName, point) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield axios_1.default.post(`http://${robotconfig_1.robotSettings[robotName].robotIP}/cmd/charge`, {
-                type: 1,
+                type: 1, // 지정된 위치로 이동 후 가까운 충전 포인트를 찾아서 접속함
                 point: `${point}`
             });
             if ((yield response.status) === 200) {
@@ -149,11 +149,12 @@ function checkBattery(robotName) {
 exports.checkBattery = checkBattery;
 //속도 변경
 //기본적인 작동테스트만함, 추가코딩필요
-function changeSpeed() {
+function changeSpeed(speedValue) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            // max = 1;
             const response = yield axios_1.default.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
-                max_vel: 1
+                max_vel: speedValue
             });
             if (response.status === 200) {
                 console.log(response.data);

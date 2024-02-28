@@ -56,12 +56,12 @@ export async function movePoint(robotName: string, point: string) {
 }
 
 // 좌표로 이동
-export async function moveCoordinates(robotName: string, xstring?: string, ystring?: string, thetastring?: string) {
+export async function moveCoordinates(xstring?: string, ystring?: string, thetastring?: string) {
     var x: number = Number(xstring);
     var y: number = Number(ystring);
     var theta: number = Number(thetastring);
     try {
-        const response = await axios.post(`http://${robotSettings[robotName].robotIP}/cmd/nav`, {
+        const response = await axios.post(`http://192.168.0.177/cmd/nav`, {
             x,
             y,
             theta
@@ -136,10 +136,11 @@ export async function checkBattery(robotName: string) {  // 로봇이름
 
 //속도 변경
 //기본적인 작동테스트만함, 추가코딩필요
-export async function changeSpeed() {
+export async function changeSpeed(speedValue:number) {
     try {
+        // max = 1;
         const response = await axios.post(`http://192.168.0.177/cmd/nav_max_vel_x_config`, {
-            max_vel:1
+            max_vel:speedValue
         });
         if (response.status === 200) {
             console.log(response.data);

@@ -41,56 +41,58 @@ import * as Func from './Services/robotCommands.js';
 // serverSetup();
 RobotSetup.serverSetup();
 
+Func.moveCoordinates('-0.03,', '0.46', "91.0");
+
 // 각 로봇의 좌표 계속 전송
 // 각 로봇 레이저 좌표 계속 전송
 
-export async function setSpeed() {
-    try {
-        // 좌표 받기
-        const response = await axios.post(`http://192.168.0.177/cmd/max_speed`, {
-            speed : 0.5
-        });
-        if (response.status === 200) {
-            // console.log(response.data); // theta 는 radian이라서 변환이 필요함
-        }
-    } catch (error) {
-        console.error('Error with API call:', error);
-    }
-}
-setSpeed();
+// export async function setSpeed() {
+//     try {
+//         // 좌표 받기
+//         const response = await axios.post(`http://192.168.0.177/cmd/max_speed`, {
+//             speed : 0.5
+//         });
+//         if (response.status === 200) {
+//             // console.log(response.data); // theta 는 radian이라서 변환이 필요함
+//         }
+//     } catch (error) {
+//         console.error('Error with API call:', error);
+//     }
+// }
+// setSpeed();
 
-setInterval(async () => {
-    // 좌표와 레이저 정보 받기
-    for(var i in robotSettings){
-        await Func.getPose(i);
-        await Func.getLaser(i);
-        console.log(robotSettings[i].robotIP);
-        // console.log(robotCoordinate[robotSettings[i].robotNumber]);
-    }
+// setInterval(async () => {
+//     // 좌표와 레이저 정보 받기
+//     for(var i in robotSettings){
+//         await Func.getPose(i);
+//         await Func.getLaser(i);
+//         console.log(robotSettings[i].robotIP);
+//         // console.log(robotCoordinate[robotSettings[i].robotNumber]);
+//     }
 
-    // 장애물 감지 
-    for(var i in robotSettings){
-        for(const coordinate of laserCoordinate[robotSettings[i].robotNumber]){
-            const robotTheta = robotCoordinate[robotSettings[i].robotNumber].theta * (180 / Math.PI);
-            const robotX = robotCoordinate[robotSettings[i].robotNumber].x;
-            const robotY = robotCoordinate[robotSettings[i].robotNumber].y;
-            const dx = robotX - coordinate.x;
-            const dy = robotY - coordinate.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+//     // 장애물 감지 
+//     for(var i in robotSettings){
+//         for(const coordinate of laserCoordinate[robotSettings[i].robotNumber]){
+//             const robotTheta = robotCoordinate[robotSettings[i].robotNumber].theta * (180 / Math.PI);
+//             const robotX = robotCoordinate[robotSettings[i].robotNumber].x;
+//             const robotY = robotCoordinate[robotSettings[i].robotNumber].y;
+//             const dx = robotX - coordinate.x;
+//             const dy = robotY - coordinate.y;
+//             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            // 장애물과 로봇이 일정거리 이내
-            // 레이저 좌표에서 벽을 제외한 통로의 값만 장애물로 감지
-            if(distance < 2.5 && coordinate.x > 0.3 && coordinate.x < 3.40 && coordinate.y > -1 && coordinate.y < 8.4) {
-                // console.log(i + "가 인식한 장애물의 좌표" + coordinate.x + " / "+ coordinate.y);
-                var direction = await Func.getDivideDirection(robotTheta, coordinate.x, coordinate.y, robotX, robotY);
-                console.log(direction); // 로봇의 기준으로 장애물이 left / right인지 확인
-                break;
-            }     
-        }
-    }
-    const currentDate = new Date();
-    console.log(currentDate);
-}, 33);
+//             // 장애물과 로봇이 일정거리 이내
+//             // 레이저 좌표에서 벽을 제외한 통로의 값만 장애물로 감지
+//             if(distance < 2.5 && coordinate.x > 0.3 && coordinate.x < 3.40 && coordinate.y > -1 && coordinate.y < 8.4) {
+//                 // console.log(i + "가 인식한 장애물의 좌표" + coordinate.x + " / "+ coordinate.y);
+//                 var direction = await Func.getDivideDirection(robotTheta, coordinate.x, coordinate.y, robotX, robotY);
+//                 console.log(direction); // 로봇의 기준으로 장애물이 left / right인지 확인
+//                 break;
+//             }     
+//         }
+//     }
+//     const currentDate = new Date();
+//     console.log(currentDate);
+// }, 33);
     
     
 // },100);
@@ -136,4 +138,5 @@ setInterval(async () => {
 // 027.019.155.8
 // movePoint('192.168.0.15', '0');
 // moverCoordinates('192.168.0.15', 1.0, 0.3, radians);
+
 
