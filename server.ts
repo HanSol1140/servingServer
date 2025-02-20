@@ -1,21 +1,23 @@
 // server.ts
 import express from 'express';
+import cors from 'cors'; // import으로 변경
+import axios from 'axios';
+import { setupMqtt } from './Services/mqttHandler'; // 경로와 이름 확인
+
 const app = express();
 app.use(express.json());
-const cors = require('cors');
 app.use(cors()); // 모든 도메인에서의 요청 허용
-import axios from 'axios';
-const PORT = process.env.PORT || 8084;
- 
+
+const PORT = process.env.PORT || 8081;
+
+// MQTT 설정
+setupMqtt();
+
 // 서버 시작
 const server = app.listen(PORT, () => {
     console.log(`Server listening on HTTP port ${PORT}`);
 });
 
-//MQTT
-// import { initializeMQTT } from './mqtthandler';
-import { initializeMQTT } from './Services/mqttHandler';
-const mqttClient = initializeMQTT();
 
 // 라우터
 import robotRouters from './Routers/robotrouters.js';
@@ -37,11 +39,11 @@ import {
 import * as RobotSetup from './Services/robotSetup.js';
 import * as Func from './Services/robotCommands.js';
 
-// 로봇명 전역변수 설정
-// serverSetup();
+// // 로봇명 전역변수 설정
+// serverSetup
 RobotSetup.serverSetup();
 
-Func.moveCoordinates('-0.03,', '0.46', "91.0");
+// Func.moveCoordinates('-0.03,', '0.46', "91.0");
 
 // 각 로봇의 좌표 계속 전송
 // 각 로봇 레이저 좌표 계속 전송
@@ -97,8 +99,8 @@ Func.moveCoordinates('-0.03,', '0.46', "91.0");
     
 // },100);
 // for(var i in robotSettings){
-    // Func.moveCoordinates("192.168.0.177", "1.92", "7.31", "88");
-    // Func.moveCoordinates(i, "1.92", "-0.08", "1.5498");
+//     Func.moveCoordinates("192.168.0.177", "1.92", "7.31", "88");
+//     Func.moveCoordinates(i, "1.92", "-0.08", "1.5498");
 // }
 
 // setTimeout(() => {
@@ -120,7 +122,7 @@ Func.moveCoordinates('-0.03,', '0.46', "91.0");
 //250도 -> 프로그램 153.55
 
 
-//Theta 계산 // 각도 => Theta
+// Theta 계산 // 각도 => Theta
 // const degrees = 88.8;
 // const radians = (degrees * Math.PI) / 180;
 // console.log(radians);

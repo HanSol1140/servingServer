@@ -1,11 +1,23 @@
 // mqtthandler.ts
-import mqtt from 'mqtt';
+import * as mqtt from 'mqtt';
 import axios from 'axios';
 import fs from 'fs';
 import { robotSettings, setRobotSettings, pointCoordinate, setPointCoordinate } from '../robotconfig';
-import * as Func from '../Services/robotCommands.js';
-export function initializeMQTT() {
-    const mqttClient = mqtt.connect('mqtt://192.168.0.137:1883');
+import * as Func from './robotCommands.js';
+
+// MQTT 브로커 연결 옵션
+// MQTT 브로커 연결 옵션
+const mqttOptions = {
+    clientId: `serving_home_${Math.random().toString(16).substr(2, 8)}`, // 랜덤 클라이언트 ID 생성
+    username: 'nanonix', // 브로커 로그인 아이디
+    password: '$@43nanonix', // 브로커 로그인 비밀번호
+    reconnectPeriod: 1000, // 재연결 간격(ms)
+    connectTimeout: 30 * 1000, // 연결 타임아웃(ms)
+};
+// MQTT 클라이언트 생성 및 연결
+const mqttClient = mqtt.connect('mqtt://192.168.0.230:1883', mqttOptions);
+
+export function setupMqtt() {
     mqttClient.on('error', function (err) {
         console.log('MQTT Error: ', err);
     });
@@ -16,11 +28,7 @@ export function initializeMQTT() {
         console.log("MQTT client is trying to reconnect");
     });
     mqttClient.on('connect', function () {
-        mqttClient.subscribe('servingserver', function (err) {
-            if (!err) {
-                console.log('Connected to MQTT broker');
-            }
-        });
+        console.log('Connected to MQTT broker');
     });
     mqttClient.on('message', async function (topic, message) {
         // 값 체크용
@@ -90,7 +98,7 @@ export function initializeMQTT() {
             console.log(radians);
             console.log("moverCoordinates request");
             console.log(robotSettings[data.robotName]); // IP
-            Func.moveCoordinates(data.robotName, data.coordinatesX, data.coordinatesY, radians);
+            Func.moveCoordinates(data.robotName, data.coordinatesX, data.coordinatesY);
             // var message = {
             //     servingAPI : "moverCoordinates",
             //     robotName : "robot1",
@@ -116,7 +124,7 @@ export function initializeMQTT() {
             // client.publish('servingserver', JSON.stringify(message));
             //
         }
-        
+
 
     });
     return mqttClient;

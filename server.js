@@ -39,11 +39,11 @@ const server = app.listen(PORT, () => {
 });
 //MQTT
 // import { initializeMQTT } from './mqtthandler';
-const mqttHandler_1 = require("./Services/mqttHandler");
+const mqttHandler_1 = require("./Services/mqttHandler.js");
 const mqttClient = (0, mqttHandler_1.initializeMQTT)();
 // 라우터
 const robotrouters_js_1 = __importDefault(require("./Routers/robotrouters.js"));
-const pointrouters_1 = __importDefault(require("./Routers/pointrouters"));
+const pointrouters_1 = __importDefault(require("./Routers/pointrouters.js"));
 app.use('/', robotrouters_js_1.default);
 app.use('/', pointrouters_1.default);
 const RobotSetup = __importStar(require("./Services/robotSetup.js"));
